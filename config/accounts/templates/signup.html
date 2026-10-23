@@ -1,0 +1,58 @@
+{% extends 'base_public.html' %}
+{% load static %}
+
+{% block content %}
+<div class="auth">
+  <section class="auth-form">
+    <div class="auth-box">
+      <a class="brand px-0" href="index.html"><span class="brand-mark"><i class="bi bi-boxes"></i></span>Stockroom</a>
+      <h1 class="h3 mb-1">Create your account</h1>
+      <p class="text-muted mb-4">Set up your organization. You will be its manager and can invite your team later.</p>
+      <form action="dashboard.html" method="post">
+        <div class="mb-3"><label class="form-label" for="name">Full name</label><input id="name" class="form-control"
+            placeholder="Sara Ahmadi" autocomplete="name"></div>
+        <div class="mb-3"><label class="form-label" for="org">Organization name</label><input id="org"
+            class="form-control" placeholder="Northline Co."></div>
+        <div class="mb-3"><label class="form-label" for="email">Work email</label><input id="email" type="email"
+            class="form-control" placeholder="you@company.com" autocomplete="email"></div>
+        <div class="mb-3"><label class="form-label" for="password">Password</label>
+          <div class="input-group"><input id="password" type="password" class="form-control"
+              placeholder="At least 8 characters"><button class="btn btn-outline-secondary" type="button"
+              data-toggle-password="password" aria-label="Show or hide password"><i class="bi bi-eye"></i></button>
+          </div>
+        </div>
+        <div class="mb-3"><label class="form-label" for="password2">Confirm password</label>
+          <div class="input-group"><input id="password2" type="password" class="form-control"
+              placeholder="At least 8 characters"><button class="btn btn-outline-secondary" type="button"
+              data-toggle-password="password2" aria-label="Show or hide password"><i class="bi bi-eye"></i></button>
+          </div>
+        </div><button class="btn btn-primary w-100 py-2 mt-1" type="submit">Create account</button>
+      </form>
+      <p class="text-center text-muted mt-4 mb-0">Already have an account? <a class="fw-semibold text-decoration-none"
+          href="{% url 'login_system' %}">Log in</a></p>
+    </div>
+  </section>
+  <section class="auth-side">
+    <div>
+      <h2 class="h3" style="max-width:420px">Know what is on every shelf, in every warehouse.</h2>
+      <ul class="auth-points">
+        <li><i class="bi bi-buildings"></i>
+          <div><strong>One account per business</strong>
+            <div class="text-muted">Your warehouses and products stay separate from every other organization.</div>
+          </div>
+        </li>
+        <li><i class="bi bi-arrow-left-right"></i>
+          <div><strong>Every movement on record</strong>
+            <div class="text-muted">Stock in, stock out and transfers are logged with who did it and when.</div>
+          </div>
+        </li>
+        <li><i class="bi bi-people"></i>
+          <div><strong>Bring your team</strong>
+            <div class="text-muted">A manager adds members and chooses what each person can do.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+</div>
+{% endblock %}

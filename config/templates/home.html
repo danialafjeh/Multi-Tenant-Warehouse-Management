@@ -1,0 +1,176 @@
+{% extends 'base_public.html' %}
+{% load static %}
+
+{% block content %}
+<header class="lp-nav">
+  <a class="brand" href="home.html"><span class="brand-mark"><i class="bi bi-boxes"></i></span>Stockroom</a>
+  <a class="btn btn-outline-secondary" href="index.html">Log in</a>
+</header>
+<main>
+  <section class="lp-hero">
+    <span class="lp-pill"><i class="bi bi-buildings"></i>Inventory management for any business</span>
+    <h1>Know exactly what you have, <span>in every warehouse</span></h1>
+    <p class="lead">Stockroom keeps your warehouses, products and stock movements in one place, so your whole team
+      works from the same numbers.</p>
+    <div class="lp-cta">
+      <a class="btn btn-primary" href="{% url 'signup_system' %}">Create account</a>
+      <a class="btn btn-primary" href="{% url 'login_system' %}">Log in</a>
+    </div>
+    <p class="lp-note">Free to set up. Invite your team after you sign up.</p>
+    <div class="card lp-preview" aria-hidden="true">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <div class="p-3 p-md-4">
+        <div class="row g-3 mb-3">
+          <div class="col-4">
+            <div class="card stat"><span class="stat-icon d-none d-sm-grid" style="background:#e8eefc;color:#2457d6"><i
+                  class="bi bi-buildings"></i></span>
+              <div>
+                <div class="stat-value" style="font-size:1.35rem">4</div>
+                <div class="stat-label">Warehouses</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card stat"><span class="stat-icon d-none d-sm-grid" style="background:#efe8fb;color:#6d3fc4"><i
+                  class="bi bi-box-seam"></i></span>
+              <div>
+                <div class="stat-value" style="font-size:1.35rem">126</div>
+                <div class="stat-label">Products</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card stat"><span class="stat-icon d-none d-sm-grid" style="background:#e3f5e9;color:#15803d"><i
+                  class="bi bi-boxes"></i></span>
+              <div>
+                <div class="stat-value" style="font-size:1.35rem">18,420</div>
+                <div class="stat-label">Units in stock</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Warehouse</th>
+                  <th class="num">On hand</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="cell-title">Thermal labels 100x150</td>
+                  <td>Main warehouse</td>
+                  <td class="num fw-bold">1,650</td>
+                  <td><span class="badge-soft ok">In stock</span></td>
+                </tr>
+                <tr>
+                  <td class="cell-title">Packing tape 48mm</td>
+                  <td>North depot</td>
+                  <td class="num fw-bold">12</td>
+                  <td><span class="badge-soft low">Low stock</span></td>
+                </tr>
+                <tr>
+                  <td class="cell-title">Pallet wrap 500mm</td>
+                  <td>City store room</td>
+                  <td class="num fw-bold">0</td>
+                  <td><span class="badge-soft empty">Out of stock</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="lp-section" id="features">
+    <h2>Everything you need to run your stock</h2>
+    <p>Simple tools for tracking quantities, without spreadsheets or guesswork.</p>
+    <div class="row g-3">
+      <div class="col-md-6 col-lg-4">
+        <div class="card lp-feature"><span class="stat-icon" style="background:#e8eefc;color:#2457d6"><i
+              class="bi bi-buildings"></i></span>
+          <h3>One account per business</h3>
+          <p>Your warehouses, products and team live in your own private space, separate from every other
+            organization.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card lp-feature"><span class="stat-icon" style="background:#e3f5e9;color:#15803d"><i
+              class="bi bi-geo-alt"></i></span>
+          <h3>Multiple warehouses</h3>
+          <p>Add every location you store goods in and see what is on each shelf at any moment.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card lp-feature"><span class="stat-icon" style="background:#efe8fb;color:#6d3fc4"><i
+              class="bi bi-box-seam"></i></span>
+          <h3>A single product catalog</h3>
+          <p>Define a product once and track its quantity across all your warehouses.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card lp-feature"><span class="stat-icon" style="background:#fdeadf;color:#c2410c"><i
+              class="bi bi-arrow-left-right"></i></span>
+          <h3>Stock in, out and transfers</h3>
+          <p>Record deliveries, outgoing orders and moves between warehouses in a few clicks.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card lp-feature"><span class="stat-icon" style="background:#fdf3d3;color:#a16207"><i
+              class="bi bi-clock-history"></i></span>
+          <h3>Complete movement history</h3>
+          <p>Every change is logged with who did it, when and why, so numbers can always be traced.</p>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="card lp-feature"><span class="stat-icon" style="background:#e8eefc;color:#2457d6"><i
+              class="bi bi-people"></i></span>
+          <h3>Your team, your rules</h3>
+          <p>A manager invites members and decides who can record stock and who can only view.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="lp-section" id="how">
+    <h2>Up and running in three steps</h2>
+    <p>No setup calls and nothing to install.</p>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="lp-step"><b>1</b>
+          <div>
+            <h3>Create your account</h3>
+            <p>Sign up and name your organization. You become its manager.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="lp-step"><b>2</b>
+          <div>
+            <h3>Add warehouses and products</h3>
+            <p>Describe where you store goods and what you keep.</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="lp-step"><b>3</b>
+          <div>
+            <h3>Record every movement</h3>
+            <p>Log stock in, out and transfers and always know the real quantity.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="lp-final">
+    <div class="box">
+      <h2>Ready to get your stock under control?</h2>
+      <p>Create your organization in a minute and add your first warehouse.</p>
+      <a class="btn btn-light" href="register.html">Create account</a>
+    </div>
+  </section>
+</main>
+{% endblock %}

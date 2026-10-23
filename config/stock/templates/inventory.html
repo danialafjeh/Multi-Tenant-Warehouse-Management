@@ -1,0 +1,282 @@
+{% extends 'base_management.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+  <div class="page-head">
+    <div>
+      <h1>Inventory</h1>
+      <p>Current quantity of each product in each warehouse.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+        <i class="bi bi-plus-lg me-1"></i>Stock in
+      </button>
+      <button class="btn btn-out" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+        Stock out
+      </button>
+      <button class="btn btn-move" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
+        Transfer
+      </button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="toolbar">
+      <div class="input-group" style="width:260px">
+        <span class="input-group-text bg-white">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="search" class="form-control" placeholder="Search product or SKU" style="min-width:0">
+      </div>
+      <select class="form-select">
+        <option>All warehouses</option>
+        <option>Main warehouse</option>
+        <option>North depot</option>
+        <option>City store room</option>
+        <option>Returns hub</option>
+      </select>
+      <select class="form-select">
+        <option>All stock levels</option>
+        <option>In stock</option>
+        <option>Low stock</option>
+        <option>Out of stock</option>
+      </select>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Warehouse</th>
+            <th class="num">On hand</th>
+            <th class="num">Reorder level</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="cell-title">Thermal labels 100x150</div>
+              <div class="cell-sub sku">TL-100150</div>
+            </td>
+            <td>Main warehouse</td>
+            <td class="num fw-bold">1,650</td>
+            <td class="num text-muted">200</td>
+            <td><span class="badge-soft ok">In stock</span></td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+                In
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+                Out
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
+                Transfer
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cell-title">Thermal labels 100x150</div>
+              <div class="cell-sub sku">TL-100150</div>
+            </td>
+            <td>North depot</td>
+            <td class="num fw-bold">900</td>
+            <td class="num text-muted">200</td>
+            <td><span class="badge-soft ok">In stock</span></td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+                In
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+                Out
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
+              Transfer
+            </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cell-title">Packing tape 48mm</div>
+              <div class="cell-sub sku">PT-048</div>
+            </td>
+            <td>North depot</td>
+            <td class="num fw-bold">12</td>
+            <td class="num text-muted">50</td>
+            <td><span class="badge-soft low">Low stock</span></td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+                In
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+                Out
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
+                Transfer
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cell-title">Packing tape 48mm</div>
+              <div class="cell-sub sku">PT-048</div>
+            </td>
+            <td>Main warehouse</td>
+            <td class="num fw-bold">240</td>
+            <td class="num text-muted">50</td>
+            <td><span class="badge-soft ok">In stock</span></td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+                In
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+                Out
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
+                Transfer
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cell-title">Pallet wrap 500mm</div>
+              <div class="cell-sub sku">PW-500</div>
+            </td>
+            <td>City store room</td>
+            <td class="num fw-bold">0</td>
+            <td class="num text-muted">20</td>
+            <td><span class="badge-soft empty">Out of stock</span></td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+                In
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+                Out
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
+                Transfer
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cell-title">Barcode scanner BS-20</div>
+              <div class="cell-sub sku">BS-20</div>
+            </td>
+            <td>Main warehouse</td>
+            <td class="num fw-bold">3</td>
+            <td class="num text-muted">5</td>
+            <td><span class="badge-soft low">Low stock</span></td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+                In
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+                Out
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
+                Transfer
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="cell-title">Safety gloves M</div>
+              <div class="cell-sub sku">SG-M</div>
+            </td>
+            <td>Returns hub</td>
+            <td class="num fw-bold">18</td>
+            <td class="num text-muted">40</td>
+            <td><span class="badge-soft low">Low stock</span></td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+                In
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+                Out
+              </button> 
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
+                Transfer
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-foot"><span>Showing 1 to 7 of 214</span>
+      <nav aria-label="Pages">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="modal fade" id="movementModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+      <form class="modal-content" action="#" method="post">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5" id="movementTitle">Record stock in</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12"><label class="form-label">Movement type</label>
+              <div class="btn-group type-switch w-100" role="group">
+                <input type="radio" class="btn-check" name="movement_type" id="t_in" value="in" checked>
+                <label class="btn btn-outline-secondary" for="t_in">Stock in</label>
+                <input type="radio" class="btn-check" name="movement_type" id="t_out"value="out">
+                <label class="btn btn-outline-secondary" for="t_out">Stock out</label>
+                <input type="radio" class="btn-check" name="movement_type" id="t_transfer" value="transfer">
+                <label class="btn btn-outline-secondary" for="t_transfer">Transfer</label>
+              </div>
+            </div>
+            <div class="col-12"><label class="form-label">Product</label><select class="form-select">
+                <option>Thermal labels 100x150</option>
+                <option>Packing tape 48mm</option>
+                <option>Pallet wrap 500mm</option>
+                <option>Corrugated box 40x30x20</option>
+                <option>Barcode scanner BS-20</option>
+              </select></div>
+            <div class="col-12 d-none" id="fromBox"><label class="form-label">From warehouse</label><select
+                class="form-select">
+                <option>Main warehouse</option>
+                <option>North depot</option>
+                <option>City store room</option>
+                <option>Returns hub</option>
+              </select></div>
+            <div class="col-12" id="toBox"><label class="form-label">To warehouse</label><select class="form-select">
+                <option>Main warehouse</option>
+                <option>North depot</option>
+                <option>City store room</option>
+                <option>Returns hub</option>
+              </select></div>
+            <div class="col-sm-5">
+              <label class="form-label">Quantity</label>
+              <input type="number" class="form-control" placeholder="0" value="">
+            </div>
+            <div class="col-sm-7">
+              <label class="form-label">Reference</label>
+              <input type="text" class="form-control" placeholder="Order or delivery number" value="">
+              <div class="form-text">Optional</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Note</label>
+              <textarea class="form-control" rows="2" placeholder="Why is this stock moving?"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success" id="movementSubmit">Save stock in</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+{% endblock %}

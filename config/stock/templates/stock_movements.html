@@ -1,0 +1,148 @@
+{% extends 'base_management.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+  <div class="page-head">
+    <div>
+      <h1>Stock movements</h1>
+      <p>Every stock in, stock out and transfer, newest first.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn btn-outline-secondary"><i class="bi bi-download me-1"></i>Export CSV</button>
+    </div>
+  </div>
+  <div class="card">
+    <form class="toolbar" action="#" method="get">
+      <div><label class="form-label small mb-1">From</label><input type="date" class="form-control"></div>
+      <div><label class="form-label small mb-1">To</label><input type="date" class="form-control"></div>
+      <div><label class="form-label small mb-1">Type</label><select class="form-select">
+          <option>All types</option>
+          <option>Stock in</option>
+          <option>Stock out</option>
+          <option>Transfer</option>
+        </select></div>
+      <div><label class="form-label small mb-1">Warehouse</label><select class="form-select">
+          <option>All warehouses</option>
+          <option>Main warehouse</option>
+          <option>North depot</option>
+          <option>City store room</option>
+          <option>Returns hub</option>
+        </select></div>
+      <div><label class="form-label small mb-1">Product</label><input class="form-control" placeholder="Name or SKU">
+      </div>
+      <div class="align-self-end d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Apply filters</button>
+        <a class="btn btn-outline-secondary" href="movements.html">Clear</a>
+      </div>
+    </form>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Type</th>
+            <th>Product</th>
+            <th>Warehouse</th>
+            <th class="num">Quantity</th>
+            <th>Recorded by</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-nowrap">19 Oct, 09:42</td>
+            <td><span class="badge-soft in">Stock in</span></td>
+            <td>
+              <div class="cell-title">Thermal labels 100x150</div>
+            </td>
+            <td>Main warehouse</td>
+            <td class="num qty-in">+500</td>
+            <td>Sara Ahmadi</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">19 Oct, 09:10</td>
+            <td><span class="badge-soft out">Stock out</span></td>
+            <td>
+              <div class="cell-title">Packing tape 48mm</div>
+            </td>
+            <td>North depot</td>
+            <td class="num qty-out">-36</td>
+            <td>Omid Karimi</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">18 Oct, 16:25</td>
+            <td><span class="badge-soft move">Transfer</span></td>
+            <td>
+              <div class="cell-title">Pallet wrap 500mm</div>
+            </td>
+            <td>Main warehouse to City store room</td>
+            <td class="num qty-move">24</td>
+            <td>Nima Rahimi</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">18 Oct, 11:03</td>
+            <td><span class="badge-soft in">Stock in</span></td>
+            <td>
+              <div class="cell-title">Corrugated box 40x30x20</div>
+            </td>
+            <td>Returns hub</td>
+            <td class="num qty-in">+240</td>
+            <td>Omid Karimi</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">17 Oct, 15:48</td>
+            <td><span class="badge-soft out">Stock out</span></td>
+            <td>
+              <div class="cell-title">Barcode scanner BS-20</div>
+            </td>
+            <td>Main warehouse</td>
+            <td class="num qty-out">-3</td>
+            <td>Sara Ahmadi</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">17 Oct, 10:12</td>
+            <td><span class="badge-soft in">Stock in</span></td>
+            <td>
+              <div class="cell-title">Bubble mailer size C</div>
+            </td>
+            <td>North depot</td>
+            <td class="num qty-in">+150</td>
+            <td>Nima Rahimi</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">16 Oct, 14:30</td>
+            <td><span class="badge-soft out">Stock out</span></td>
+            <td>
+              <div class="cell-title">Safety gloves M</div>
+            </td>
+            <td>Returns hub</td>
+            <td class="num qty-out">-22</td>
+            <td>Omid Karimi</td>
+          </tr>
+          <tr>
+            <td class="text-nowrap">16 Oct, 09:05</td>
+            <td><span class="badge-soft in">Stock in</span></td>
+            <td>
+              <div class="cell-title">Barcode scanner BS-20</div>
+            </td>
+            <td>Main warehouse</td>
+            <td class="num qty-in">+10</td>
+            <td>Sara Ahmadi</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-foot"><span>Showing 1 to 8 of 342</span>
+      <nav aria-label="Pages">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</main>
+{% endblock %}

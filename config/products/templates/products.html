@@ -1,0 +1,310 @@
+{% extends 'base_management.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+  <div class="page-head">
+    <div>
+      <h1>Products</h1>
+      <p>Your catalog, shared by all warehouses.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
+        <i class="bi bi-plus-lg me-1"></i>Add product
+      </button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="toolbar">
+      <div class="input-group" style="width:260px">
+        <span class="input-group-text bg-white">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="search" class="form-control" placeholder="Search by name or SKU" style="min-width:0">
+      </div>
+      <select class="form-select">
+        <option>All categories</option>
+        <option>Labels</option>
+        <option>Packaging</option>
+        <option>Boxes</option>
+        <option>Equipment</option>
+      </select>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>SKU</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Unit</th>
+            <th class="num">Reorder level</th>
+            <th class="num">Total on hand</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="sku">TL-100150</td>
+            <td>
+              <div class="cell-title">Thermal labels 100x150</div>
+            </td>
+            <td><span class="badge-soft neutral">Labels</span></td>
+            <td>Roll</td>
+            <td class="num">200</td>
+            <td class="num fw-bold">3,400</td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
+                Details
+              </button> 
+              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Thermal labels 100x150">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="sku">PT-048</td>
+            <td>
+              <div class="cell-title">Packing tape 48mm</div>
+            </td>
+            <td><span class="badge-soft neutral">Packaging</span></td>
+            <td>Piece</td>
+            <td class="num">50</td>
+            <td class="num fw-bold">312</td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
+                Details
+              </button> 
+              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Packing tape 48mm">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="sku">PW-500</td>
+            <td>
+              <div class="cell-title">Pallet wrap 500mm</div>
+            </td>
+            <td><span class="badge-soft neutral">Packaging</span></td>
+            <td>Roll</td>
+            <td class="num">20</td>
+            <td class="num fw-bold">140</td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
+                Details
+              </button> 
+              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Pallet wrap 500mm">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="sku">CB-403020</td>
+            <td>
+              <div class="cell-title">Corrugated box 40x30x20</div>
+            </td>
+            <td><span class="badge-soft neutral">Boxes</span></td>
+            <td>Piece</td>
+            <td class="num">300</td>
+            <td class="num fw-bold">2,980</td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
+                Details
+              </button> 
+              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Corrugated box 40x30x20">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="sku">BS-20</td>
+            <td>
+              <div class="cell-title">Barcode scanner BS-20</div>
+            </td>
+            <td><span class="badge-soft neutral">Equipment</span></td>
+            <td>Piece</td>
+            <td class="num">5</td>
+            <td class="num fw-bold">14</td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
+                Details
+              </button> 
+              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Barcode scanner BS-20">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="sku">BM-C</td>
+            <td>
+              <div class="cell-title">Bubble mailer size C</div>
+            </td>
+            <td><span class="badge-soft neutral">Mailers</span></td>
+            <td>Piece</td>
+            <td class="num">200</td>
+            <td class="num fw-bold">1,260</td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
+                Details
+              </button> 
+              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Bubble mailer size C">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td class="sku">SG-M</td>
+            <td>
+              <div class="cell-title">Safety gloves M</div>
+            </td>
+            <td><span class="badge-soft neutral">Safety</span></td>
+            <td>Pair</td>
+            <td class="num">40</td>
+            <td class="num fw-bold">58</td>
+            <td class="text-end text-nowrap">
+              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
+                Details
+              </button> 
+              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Safety gloves M">
+                <i class="bi bi-pencil"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-foot"><span>Showing 1 to 7 of 126</span>
+      <nav aria-label="Pages">
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+          <li class="page-item active"><a class="page-link" href="#">1</a></li>
+          <li class="page-item"><a class="page-link" href="#">2</a></li>
+          <li class="page-item"><a class="page-link" href="#">3</a></li>
+          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+      <form class="modal-content" action="#" method="post">
+        <div class="modal-header">
+          <h2 class="modal-title fs-5">Product details</h2><button type="button" class="btn-close"
+            data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Product name</label>
+              <input type="text" class="form-control" placeholder="Thermal labels 100x150" value="">
+              </div>
+            <div class="col-sm-6">
+              <label class="form-label">SKU</label>
+              <input type="text" class="form-control" placeholder="TL-100150" value="">
+            </div>
+            <div class="col-sm-6"><label class="form-label">Category</label><select class="form-select">
+                <option>Labels</option>
+                <option>Packaging</option>
+                <option>Boxes</option>
+                <option>Mailers</option>
+                <option>Equipment</option>
+                <option>Safety</option>
+              </select>
+            </div>
+            <div class="col-sm-6"><label class="form-label">Unit of measure</label><select class="form-select">
+                <option>Piece</option>
+                <option>Roll</option>
+                <option>Pair</option>
+                <option>Box</option>
+                <option>Kg</option>
+              </select>
+            </div>
+            <div class="col-sm-6"><label class="form-label">Reorder level</label><input type="number" class="form-control" placeholder="0" value="">
+              <div class="form-text">Low stock alerts start below this amount.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+              Save product
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="productDetail" style="width:420px">
+    <div class="offcanvas-header border-bottom">
+      <h2 class="offcanvas-title fs-5">Thermal labels 100x150</h2>
+      <button class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <dl class="detail-list row">
+        <div class="col-6">
+          <dt>SKU</dt>
+          <dd><span class='sku'>TL-100150</span></dd>
+        </div>
+        <div class="col-6">
+          <dt>Category</dt>
+          <dd>Labels</dd>
+        </div>
+        <div class="col-6">
+          <dt>Unit</dt>
+          <dd>Roll</dd>
+        </div>
+        <div class="col-6">
+          <dt>Reorder level</dt>
+          <dd>200</dd>
+        </div>
+        <div class="col-12">
+          <dt>Description</dt>
+          <dd>Direct thermal shipping labels, 500 per roll.</dd>
+        </div>
+      </dl>
+      <h3 class="h6 mb-2">Stock by warehouse</h3>
+      <div class="card">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Warehouse</th>
+              <th class="num">On hand</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Main warehouse</td>
+              <td class="num fw-bold">1,650</td>
+            </tr>
+            <tr>
+              <td>North depot</td>
+              <td class="num fw-bold">900</td>
+            </tr>
+            <tr>
+              <td>City store room</td>
+              <td class="num fw-bold">520</td>
+            </tr>
+            <tr>
+              <td>Returns hub</td>
+              <td class="num fw-bold">330</td>
+            </tr>
+            <tr class="table-light">
+              <td class="fw-bold">Total</td>
+              <td class="num fw-bold">3,400</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <a class="btn btn-primary flex-fill" href="inventory.html">Open in inventory</a>
+        <a class="btn btn-outline-secondary flex-fill" href="movements.html">See history</a>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
