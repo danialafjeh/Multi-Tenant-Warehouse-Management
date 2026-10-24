@@ -9,3 +9,8 @@ def products_management(request):
 
 def categories_management(request):
     return render(request, 'categories.html', {})
+
+
+
+def units_of_measure_management(request):
+    return render(request, 'unitsofmeasure.html', {})
