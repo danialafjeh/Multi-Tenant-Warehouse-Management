@@ -4,3 +4,8 @@ from django.shortcuts import render
 
 def products_management(request):
     return render(request, 'products.html', {})
+
+
+
+def categories_management(request):
+    return render(request, 'categories.html', {})
