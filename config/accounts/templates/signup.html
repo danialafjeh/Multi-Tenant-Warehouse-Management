@@ -7,30 +7,89 @@
     <div class="auth-box">
       <a class="brand px-0" href="index.html"><span class="brand-mark"><i class="bi bi-boxes"></i></span>Stockroom</a>
       <h1 class="h3 mb-1">Create your account</h1>
-      <p class="text-muted mb-4">Set up your organization. You will be its manager and can add your team members later.</p>
-      <form action="dashboard.html" method="post">
-        <div class="mb-3"><label class="form-label" for="name">First name</label><input id="first_name" class="form-control"
-            placeholder="Sara" autocomplete="fname"></div>
-        <div class="mb-3"><label class="form-label" for="name">Last name</label><input id="last_name" class="form-control"
-            placeholder="Ahmadi" autocomplete="lname"></div>
-        <div class="mb-3"><label class="form-label" for="name">Username</label><input id="usernamename" class="form-control"
-            placeholder="Sara_ahmadi" autocomplete="username"></div>
-        <div class="mb-3"><label class="form-label" for="org">Organization name</label><input id="org"
-            class="form-control" placeholder="Northline Co."></div>
-        <div class="mb-3"><label class="form-label" for="email">Work email</label><input id="email" type="email"
-            class="form-control" placeholder="you@company.com" autocomplete="email"></div>
-        <div class="mb-3"><label class="form-label" for="password">Password</label>
-          <div class="input-group"><input id="password" type="password" class="form-control"
-              placeholder="At least 8 characters"><button class="btn btn-outline-secondary" type="button"
-              data-toggle-password="password" aria-label="Show or hide password"><i class="bi bi-eye"></i></button>
-          </div>
+      <p class="text-muted mb-4">Set up your organization. You will be its manager and can add your team members later.
+      </p>
+      <form action="{% url 'signup_system' %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.username.id_for_label }}">
+            Username
+          </label>
+          {{ form.username }}
+          {% for error in form.username.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="mb-3"><label class="form-label" for="password2">Confirm password</label>
-          <div class="input-group"><input id="password2" type="password" class="form-control"
-              placeholder="At least 8 characters"><button class="btn btn-outline-secondary" type="button"
-              data-toggle-password="password2" aria-label="Show or hide password"><i class="bi bi-eye"></i></button>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.first_name.id_for_label }}">
+            First name
+          </label>
+          {{ form.first_name }}
+          {% for error in form.first_name.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.last_name.id_for_label }}">
+            Last name
+          </label>
+          {{ form.last_name }}
+          {% for error in form.last_name.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.organization_name.id_for_label }}">
+            Organization name
+          </label>
+          {{ form.organization_name }}
+          {% for error in form.organization_name.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.email.id_for_label }}">
+            Work email
+          </label>
+          {{ form.email }}
+          {% for error in form.email.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.password1.id_for_label }}">
+            Password
+          </label>
+          <div class="input-group">
+            {{ form.password1 }}
+            <button class="btn btn-outline-secondary" type="button" data-toggle-password="password"
+              aria-label="Show or hide password">
+              <i class="bi bi-eye"></i>
+            </button>
           </div>
-        </div><button class="btn btn-primary w-100 py-2 mt-1" type="submit">Create account</button>
+          {% for error in form.password1.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.password2.id_for_label }}">
+            Confirm password
+          </label>
+          <div class="input-group">
+            {{ form.password2 }}
+            <button class="btn btn-outline-secondary" type="button" data-toggle-password="password2"
+              aria-label="Show or hide password">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+          {% for error in form.password2.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <button class="btn btn-primary w-100 py-2 mt-1" type="submit">
+          Create account
+        </button>
+      </form>
       </form>
       <p class="text-center text-muted mt-4 mb-0">Already have an account? <a class="fw-semibold text-decoration-none"
           href="{% url 'login_system' %}">Log in</a></p>

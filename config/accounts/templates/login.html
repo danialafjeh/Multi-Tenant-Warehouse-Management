@@ -8,22 +8,42 @@
       <a class="brand px-0" href="index.html"><span class="brand-mark"><i class="bi bi-boxes"></i></span>Stockroom</a>
       <h1 class="h3 mb-1">Log in to your account</h1>
       <p class="text-muted mb-4">Welcome back. Enter your details to continue.</p>
-      <form action="dashboard.html" method="post">
-        <div class="mb-3"><label class="form-label" for="username">Username</label><input id="username" class="form-control"
-            placeholder="Sara_ahmadi" autocomplete="name"></div>
-        <div class="mb-3"><label class="form-label" for="password">Password</label>
-          <div class="input-group"><input id="password" type="password" class="form-control"
-              placeholder="At least 8 characters"><button class="btn btn-outline-secondary" type="button"
-              data-toggle-password="password" aria-label="Show or hide password"><i class="bi bi-eye"></i></button>
+      <form action="{% url 'login_system' %}" method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.username.id_for_label }}">
+            Username
+          </label>
+          {{ form.username }}
+          {% for error in form.username.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="{{ form.password.id_for_label }}">
+            Password
+          </label>
+          <div class="input-group">
+            {{ form.password }}
+            <button class="btn btn-outline-secondary" type="button" data-toggle-password="password"
+              aria-label="Show or hide password">
+              <i class="bi bi-eye"></i>
+            </button>
           </div>
+          {% for error in form.password.errors %}
+          <div class="text-danger small mt-1">{{ error }}</div>
+          {% endfor %}
         </div>
-        <div class="d-flex justify-content-between mb-4">
-          <div class="form-check"><input class="form-check-input" type="checkbox" id="remember"><label
-              class="form-check-label" for="remember">Keep me logged in</label></div><a href="#"
-            class="small fw-semibold text-decoration-none">Forgot password?</a>
+        {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-danger py-2" role="alert">
+          {{ error }}
         </div>
-        <!--<button class="btn btn-primary w-100 py-2" type="submit">Log in</button> -->
-        <a href="{% url 'dashboard_management' %}" class="btn btn-primary w-100 py-2">Log in</a>
+        {% endfor %}
+        {% endif %}
+        <button class="btn btn-primary w-100 py-2" type="submit">
+          Log in
+        </button>
       </form>
       <p class="text-center text-muted mt-4 mb-0">Don't have an account? <a class="fw-semibold text-decoration-none"
           href="{% url 'signup_system' %}">Sign up</a></p>
