@@ -6,13 +6,15 @@
   <div class="page-head">
     <div>
       <h1>Members</h1>
-      <p>People who can work in Northline Co.</p>
+      <p>People who can work in {{ membership.organization }} for warehouses management.</p>
     </div>
+    {% if current_membership.role == "manager" %}
     <div class="d-flex gap-2 flex-wrap">
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#memberModal">
         <i class="bi bi-person-plus me-1"></i>Add member
       </button>
     </div>
+    {% endif %}
   </div>
   <div class="card">
     <div class="table-responsive">
@@ -26,117 +28,143 @@
             <th></th>
           </tr>
         </thead>
+
         <tbody>
+          {% for member in members %}
           <tr>
             <td>
-              <div class="d-flex align-items-center gap-2"><span class="avatar">SA</span>
+              <div class="d-flex align-items-center gap-2">
+                <span class="avatar">
+                  {% if member.user.first_name and member.user.last_name %}
+                  {{ member.user.first_name|first|upper }}{{ member.user.last_name|first|upper }}
+                  {% else %}
+                  {{ member.user.username|first|upper }}
+                  {% endif %}
+                </span>
                 <div>
-                  <div class="cell-title">Sara Ahmadi</div>
-                  <div class="cell-sub">sara@northline.co</div>
+                  <div class="cell-title">
+                    {{ member.user.get_full_name|default:member.user.username }}
+                  </div>
+
+                  <div class="cell-sub">
+                    {{ member.user.email|default:"No email provided" }}
+                  </div>
                 </div>
               </div>
             </td>
-            <td><span class="badge-soft neutral">Manager</span></td>
-            <td><span class="badge-soft ok">Active</span></td>
-            <td>12 Mar 2026</td>
-            <td class="text-end"></td>
-          </tr>
-          <tr>
             <td>
-              <div class="d-flex align-items-center gap-2"><span class="avatar">OK</span>
-                <div>
-                  <div class="cell-title">Omid Karimi</div>
-                  <div class="cell-sub">omid@northline.co</div>
-                </div>
-              </div>
+              <span class="badge-soft neutral">
+                {{ member.get_role_display }}
+              </span>
             </td>
-            <td><span class="badge-soft neutral">Warehouse staff</span></td>
-            <td><span class="badge-soft ok">Active</span></td>
-            <td>02 Apr 2026</td>
-            <td class="text-end"><button class="btn btn-outline-secondary btn-sm">Remove</button></td>
-          </tr>
-          <tr>
             <td>
-              <div class="d-flex align-items-center gap-2"><span class="avatar">NR</span>
-                <div>
-                  <div class="cell-title">Nima Rahimi</div>
-                  <div class="cell-sub">nima@northline.co</div>
-                </div>
-              </div>
+              <span class="badge-soft ok">
+                Active
+              </span>
             </td>
-            <td><span class="badge-soft neutral">Warehouse staff</span></td>
-            <td><span class="badge-soft ok">Active</span></td>
-            <td>19 Apr 2026</td>
-            <td class="text-end"><button class="btn btn-outline-secondary btn-sm">Remove</button></td>
-          </tr>
-          <tr>
             <td>
-              <div class="d-flex align-items-center gap-2"><span class="avatar">LF</span>
-                <div>
-                  <div class="cell-title">Leila Fard</div>
-                  <div class="cell-sub">leila@northline.co</div>
-                </div>
-              </div>
+              {{ member.joined_at|date:"d M Y" }}
             </td>
-            <td><span class="badge-soft neutral">Viewer</span></td>
-            <td><span class="badge-soft low">Invited</span></td>
-            <td>17 Oct 2026</td>
-            <td class="text-end"><button class="btn btn-outline-secondary btn-sm">Remove</button></td>
+            <td class="text-end">
+              {% if current_membership.role == "manager" and member.user_id != request.user.id %}
+              <button class="btn btn-outline-secondary btn-sm">
+                Remove
+              </button>
+              {% endif %}
+            </td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted py-4">
+              No members found.
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
-    <div class="card-foot"><span>Only managers can add or remove members.</span></div>
+    <div class="card-foot"><span>Only manager can add or remove members.</span></div>
   </div>
   <div class="modal fade" id="memberModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">
-      <form class="modal-content" action="#" method="post">
+      <form class="modal-content" action="{% url 'add_member_system' %}" method="POST">
+        {% csrf_token %}
         <div class="modal-header">
           <h2 class="modal-title fs-5">Add a member</h2>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
         </div>
         <div class="modal-body">
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label">First name</label>
-              <input type="text" class="form-control" placeholder="Leila_Fard" value="">
+              <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                First name
+              </label>
+              {{ form.first_name }}
             </div>
             <div class="col-12">
-              <label class="form-label">Last name</label>
-              <input type="text" class="form-control" placeholder="Leila_Fard" value="">
+              <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                Last name
+              </label>
+              {{ form.last_name }}
             </div>
             <div class="col-12">
-              <label class="form-label">Username</label>
-              <input type="text" class="form-control" placeholder="Leila_Fard" value="">
+              <label for="{{ form.username.id_for_label }}" class="form-label">
+                Username
+              </label>
+              {{ form.username }}
             </div>
             <div class="col-12">
-              <label class="form-label">Email</label>
-              <input type="email" class="form-control" placeholder="leila@company.com" value="">
+              <label for="{{ form.email.id_for_label }}" class="form-label">
+                Email
+              </label>
+              {{ form.email }}
             </div>
             <div class="col-12">
-              <label class="form-label">Role</label>
-              <select class="form-select">
-                <option>Warehouse staff</option>
-                <option>Viewer</option>
-              </select>
-              <div class="form-text">Staff can record stock movements. Viewers can only look.</div>
-            </div>
-            <div class="mb-3"><label class="form-label" for="password">Password</label>
-              <div class="input-group"><input id="password" type="password" class="form-control"
-                  placeholder="At least 8 characters"><button class="btn btn-outline-secondary" type="button"
-                  data-toggle-password="password" aria-label="Show or hide password"><i class="bi bi-eye"></i></button>
+              <label for="{{ form.role.id_for_label }}" class="form-label">
+                Role
+              </label>
+              {{ form.role }}
+              <div class="form-text">
+                Staff can record stock movements. Viewers can only look.
               </div>
             </div>
-            <div class="mb-3"><label class="form-label" for="password2">Confirm password</label>
-              <div class="input-group"><input id="password2" type="password" class="form-control"
-                  placeholder="At least 8 characters"><button class="btn btn-outline-secondary" type="button"
-                  data-toggle-password="password2" aria-label="Show or hide password"><i class="bi bi-eye"></i></button>
+            <div class="col-12">
+              <label for="{{ form.password1.id_for_label }}" class="form-label">
+                Password
+              </label>
+              <div class="input-group">
+                {{ form.password1 }}
+                <button class="btn btn-outline-secondary" type="button" data-toggle-password="password"
+                  aria-label="Show or hide password">
+                  <i class="bi bi-eye"></i>
+                </button>
               </div>
+              <div class="form-text">
+                You choose their password and tell them to log in with it.
+              </div>
+            </div>
+            <div class="col-12">
+              <label for="{{ form.password2.id_for_label }}" class="form-label">
+                Confirm password
+              </label>
+              <div class="input-group">
+                {{ form.password2 }}
+                <button class="btn btn-outline-secondary" type="button" data-toggle-password="password2"
+                  aria-label="Show or hide password">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Add member</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Add member
+          </button>
         </div>
       </form>
     </div>

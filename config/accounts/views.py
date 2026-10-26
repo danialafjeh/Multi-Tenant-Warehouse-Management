@@ -61,6 +61,7 @@ def signup_system(request):
                     request,
                     "We couldn't create your account. Please check your information and try again.",
                 )
+                return redirect('signup_system')
             else:
                 messages.success(
                     request,

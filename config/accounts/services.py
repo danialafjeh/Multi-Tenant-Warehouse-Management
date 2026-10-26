@@ -30,7 +30,7 @@ def register_user(*, first_name, last_name, username, email, password, organizat
     Membership.objects.create(
         organization=organization,
         user=user,
-        role="owner",
+        role="manager",
         is_active=True,
     )
 

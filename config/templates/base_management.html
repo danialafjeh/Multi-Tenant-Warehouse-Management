@@ -46,13 +46,20 @@
                 </a>
                 <div class="side-group">Organization</div>
                 <a class="side-link {% if request.resolver_match.url_name == 'members_management' %}active{% endif %}"
-                    href="{% url 'members_management' %}">
+                    href="{% url 'members_management_page' %}">
                     <i class="bi bi-people"></i>Members
                 </a>
             </nav>
-            <div class="org-box"><span class="avatar">NC</span>
+            <div class="org-box">
+                <span class="avatar">
+                    {{ current_organization.name|first|upper }}
+                </span>
+
                 <div class="lh-sm">
-                    <div class="fw-bold small">Northline Co.</div>
+                    <div class="fw-bold small">
+                        {{ current_organization.name }}
+                    </div>
+
                     <div class="cell-sub">Your organization</div>
                 </div>
             </div>
@@ -84,10 +91,23 @@
             <div class="ms-auto dropdown">
                 <button class="btn btn-link text-decoration-none d-flex align-items-center gap-2 p-0"
                     data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="avatar">SA</span>
+                    <span class="avatar">
+                        {% if request.user.first_name and request.user.last_name %}
+                        {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                        {% else %}
+                        {{ request.user.username|first|upper }}
+                        {% endif %}
+                    </span>
                     <span class="text-start d-none d-sm-block lh-sm">
-                    <span class="d-block fw-bold small text-body">Sara Ahmadi</span>
-                    <span class="cell-sub">Manager</span></span><i class="bi bi-chevron-down small text-muted"></i>
+                        <span class="d-block fw-bold small text-body">
+                            {{ request.user.get_full_name|default:request.user.username }}
+                        </span>
+
+                        <span class="cell-sub">
+                            {{ current_membership.get_role_display }}
+                        </span>
+                    </span>
+                    <i class="bi bi-chevron-down small text-muted"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><a class="dropdown-item" href="members.html">Members</a></li>
