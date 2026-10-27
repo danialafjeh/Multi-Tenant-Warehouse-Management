@@ -45,9 +45,11 @@
                   <div class="cell-title">
                     {{ member.user.get_full_name|default:member.user.username }}
                   </div>
-
                   <div class="cell-sub">
-                    {{ member.user.email|default:"No email provided" }}
+                    Email: {{ member.user.email|default:"No email provided" }}
+                  </div>
+                  <div class="cell-sub">
+                    Username: {{ member.user.username }}
                   </div>
                 </div>
               </div>
@@ -67,9 +69,12 @@
             </td>
             <td class="text-end">
               {% if current_membership.role == "manager" and member.user_id != request.user.id %}
-              <button class="btn btn-outline-secondary btn-sm">
-                Remove
-              </button>
+              <form method="post" action="{% url 'remove_member_system' user_id=member.user_id %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                  Remove
+                </button>
+              </form>
               {% endif %}
             </td>
           </tr>

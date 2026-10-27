@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from .models import Membership
 from django.contrib import messages
 from django.db import IntegrityError
 from .forms import AddMemberForm
-from .services import create_member
+from .services import create_member, remove_member
 
 # Create your views here.
 
@@ -80,4 +81,31 @@ def add_member_system(request):
     else:
         messages.error(request,"Invalid request method.")
         return redirect("home_page")
-        
+
+
+
+@login_required
+def remove_member_system(request, user_id):
+    current_membership = get_object_or_404(
+        Membership.objects.select_related("organization"),
+        user=request.user,
+    )
+
+    if current_membership.role != "manager":
+        messages.error(request,"You do not have permission to remove members.")
+        return redirect('members_management_page')
+
+    if user_id == request.user.pk:
+        messages.error(request, "You cannot remove your own account.")
+        return redirect("members_management_page")
+
+    target_membership = get_object_or_404(
+        Membership.objects.select_related("user"),
+        user_id=user_id,
+        organization=current_membership.organization,
+    )
+
+    remove_member(user=target_membership.user)
+
+    messages.success(request, "Member removed successfully.")
+    return redirect("members_management_page")

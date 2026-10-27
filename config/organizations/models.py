@@ -24,7 +24,7 @@ class Organization(models.Model):
 class Membership(models.Model):
     ROLE_CHOICES = [
         ("manager", "Manager"),
-        ("staff", "Warehouse Staff"),
+        ("staff", "Staff"),
         ("viewer", "Viewer"),
     ]
     

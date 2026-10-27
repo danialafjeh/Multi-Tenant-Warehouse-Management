@@ -30,3 +30,10 @@ def create_member(*, first_name, last_name, username, email, password, role, org
     )
 
     return membership
+
+
+
+@transaction.atomic
+def remove_member(*, user):
+    user.delete()
+    
