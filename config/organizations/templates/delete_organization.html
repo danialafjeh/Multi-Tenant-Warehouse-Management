@@ -1,0 +1,67 @@
+{% extends 'base_management.html' %}
+{% load static %}
+
+{% block content %}
+<main class="content">
+    <div class="page-head">
+        <div>
+            <h1>Settings</h1>
+            <p>Here you can delete your organization and its associated data from Stockroom.</p>
+        </div>
+        {% if current_membership.role == "manager" %}
+        <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#memberModal">
+                Delete my organization
+            </button>
+        </div>
+        {% endif %}
+    </div>
+    <div class="card">
+        <div class="card-foot"><strong>Please read carefully before continuing :</strong></div>
+        <div class="card-foot">
+            <span>
+                Deleting your organization from Stockroom is a permanent action that cannot be undone.<br>
+
+                * Permanent Data Loss : All data associated with your organization will be permanently deleted,
+                including
+                warehouses, products, categories, units of measurement, and inventory records.<br>
+                * Stock Movement History : All stock movement records, including stock entries, stock exits, and
+                transfers
+                between warehouses, will be permanently deleted. You will no longer be able to review your
+                organization's inventory history.<br>
+                * Warehouse Information : All warehouses belonging to your organization will be deleted, along with
+                their
+                associated inventory data.<br>
+                * Member Accounts : All user accounts belonging to members of your organization, including your own
+                account, will be permanently deleted. You will no longer be able to access Stockroom using these
+                accounts.<br>
+                * Irreversible Action : Once the deletion process is completed, your organization's data cannot be
+                recovered through Stockroom. Make sure you have saved any information you may need in the future.<br>
+                * Organization Access : All members will immediately lose access to the organization and its associated
+                resources. No member will be able to continue managing or viewing the organization's data.<br>
+                * Historical Snapshots : Certain user snapshot records may remain in Stockroom for historical reference,
+                even after the associated user accounts and organization have been deleted.<br>
+            </span>
+        </div>
+        <div class="modal fade" id="memberModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered ">
+                <form class="modal-content" action="{% url 'delete_organization_system' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5">Are you sure ?</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            Delete
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+</main>
+{% endblock %}

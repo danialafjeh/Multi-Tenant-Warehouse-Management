@@ -88,7 +88,10 @@
         </tbody>
       </table>
     </div>
-    <div class="card-foot"><span>Only manager can add or remove members.</span></div>
+    <div class="card-foot"><span>Only manager can add / remove members or permanently delete the organization.</span></div>
+    {% if current_membership.role == "manager" %}
+    <div class="card-foot"><span>If you want to permanently delete your organization and its associated data from Stockroom, <a href="{% url 'delete_organization_page' %}">click here</a></span></div>
+    {% endif %}
   </div>
   <div class="modal fade" id="memberModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">

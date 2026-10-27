@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import logout
 from django.db import transaction
 from .models import Membership
 from django.contrib import messages
 from django.db import IntegrityError
 from .forms import AddMemberForm
-from .services import create_member, remove_member
+from .services import create_member, remove_member, delete_organization
 
 # Create your views here.
 
@@ -118,3 +119,52 @@ def remove_member_system(request, user_id):
 
     messages.success(request, "Member removed successfully.")
     return redirect("members_management_page")
+
+
+
+def delete_organization_page(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+    
+    membership = get_object_or_404(
+        Membership,
+        user=request.user,
+        is_active=True,
+    )
+
+    if membership.role != "manager":
+        messages.error(request, 'Only manager can delete the organization.')
+        return redirect("members_management_page")
+
+    return render(request, "delete_organization.html")
+
+
+
+def delete_organization_system(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+    
+    if request.method == "POST":
+        current_membership = get_object_or_404(
+            Membership.objects.select_related("organization"),
+            user=request.user,
+        )
+
+        if current_membership.role != "manager":
+            messages.error(request,"You do not have permission to delete this organization.",)
+            return redirect("members_management_page")
+
+        organization_id = current_membership.organization_id
+
+        delete_organization(organization_id=organization_id)
+
+        logout(request)
+
+        messages.success(request,"The organization and its associated data have been permanently deleted.")
+        return redirect("home_page")
+    else:
+        messages.error(request, "Invalid request method.")
+        return redirect("members_management_page")
+    
