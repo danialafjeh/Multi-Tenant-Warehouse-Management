@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from .models import Membership
 from django.contrib import messages
@@ -10,6 +9,10 @@ from .services import create_member, remove_member
 # Create your views here.
 
 def members_management_page(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+    
     membership = (
         Membership.objects.select_related("organization").get(user=request.user)
     )
@@ -33,8 +36,11 @@ def members_management_page(request):
 
 
 
-@login_required
 def add_member_system(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+    
     membership = (
         Membership.objects
         .select_related("organization")
@@ -84,8 +90,11 @@ def add_member_system(request):
 
 
 
-@login_required
 def remove_member_system(request, user_id):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+    
     current_membership = get_object_or_404(
         Membership.objects.select_related("organization"),
         user=request.user,

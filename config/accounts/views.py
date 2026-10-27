@@ -80,8 +80,11 @@ def signup_system(request):
 
 
 
-@login_required
 def logout_system(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+
     if request.method == "POST":
         logout(request)
         messages.success(request, "You have logged out successfully.")
