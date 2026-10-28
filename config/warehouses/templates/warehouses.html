@@ -8,11 +8,13 @@
       <h1>Warehouses</h1>
       <p>Every location where you keep stock.</p>
     </div>
+    {% if current_membership.role == "manager" %}
     <div class="d-flex gap-2 flex-wrap">
-      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#warehouseModal">
+      <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#warehouseModal01">
         <i class="bi bi-plus-lg me-1"></i>Add warehouse
       </button>
     </div>
+    {% endif %}
   </div>
   <div class="card">
     <div class="toolbar">
@@ -41,73 +43,48 @@
           </tr>
         </thead>
         <tbody>
+          {% for warehouse in warehouses %}
           <tr>
             <td>
-              <div class="cell-title">Main warehouse</div>
-              <div class="cell-sub sku">WH-01</div>
+              <div class="cell-title">{{ warehouse.name }}</div>
+              <div class="cell-sub sku">Code: {{ warehouse.code }}</div>
             </td>
-            <td>Tehran, Shahr-e Rey</td>
-            <td class="num">64</td>
-            <td class="num">9,840</td>
-            <td><span class="badge-soft ok">Active</span></td>
+            <td>{{ warehouse.location|default:"Not provided" }}</td>
+            <td>0</td>
+            <td>0</td>
+            <td>
+              {% if warehouse.status == "active" %}
+              <span class="badge-soft ok">Active</span>
+              {% else %}
+              <span class="badge-soft empty">Inactive</span>
+              {% endif %}
+            </td>
+            {% if current_membership.role == "manager" %}
             <td class="text-end text-nowrap">
-              <a class="btn btn-outline-secondary btn-sm" href="inventory.html">View stock</a> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#warehouseModal" aria-label="Edit Main warehouse">
+              <button type="button" class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal"
+                data-bs-target="#warehouseModal01" data-mode="edit" data-id="{{ warehouse.id }}"
+                data-name="{{ warehouse.name }}" data-code="{{ warehouse.code }}" data-status="{{ warehouse.status }}"
+                data-location="{{ warehouse.location }}" data-notes="{{ warehouse.notes }}"
+                aria-label="Edit {{ warehouse.name }}">
                 <i class="bi bi-pencil"></i>
               </button>
             </td>
+          {% endif %}
           </tr>
+          {% empty %}
           <tr>
-            <td>
-              <div class="cell-title">North depot</div>
-              <div class="cell-sub sku">WH-02</div>
-            </td>
-            <td>Rasht, industrial zone</td>
-            <td class="num">41</td>
-            <td class="num">4,120</td>
-            <td><span class="badge-soft ok">Active</span></td>
-            <td class="text-end text-nowrap">
-              <a class="btn btn-outline-secondary btn-sm" href="inventory.html">View stock</a> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#warehouseModal" aria-label="Edit North depot">
-                <i class="bi bi-pencil"></i>
-              </button>
+            <td colspan="6" class="text-center text-muted py-4">
+              No warehouses found.
             </td>
           </tr>
-          <tr>
-            <td>
-              <div class="cell-title">City store room</div>
-              <div class="cell-sub sku">WH-03</div>
-            </td>
-            <td>Tehran, Valiasr St.</td>
-            <td class="num">28</td>
-            <td class="num">2,310</td>
-            <td><span class="badge-soft ok">Active</span></td>
-            <td class="text-end text-nowrap">
-              <a class="btn btn-outline-secondary btn-sm" href="inventory.html">View stock</a> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#warehouseModal" aria-label="Edit City store room">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Returns hub</div>
-              <div class="cell-sub sku">WH-04</div>
-            </td>
-            <td>Karaj, Mehrshahr</td>
-            <td class="num">19</td>
-            <td class="num">2,150</td>
-            <td><span class="badge-soft neutral">Inactive</span></td>
-            <td class="text-end text-nowrap">
-              <a class="btn btn-outline-secondary btn-sm" href="inventory.html">View stock</a> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#warehouseModal" aria-label="Edit Returns hub">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
+    <div class="card-foot">Only manager can add / edit warehouses.</div>
+    {% if current_membership.role == "manager" %}
+    <div class="card-foot">Warehouses cannot be deleted to preserve historical stock movement records and reports. Instead, you can deactivate a warehouse.</div>
+    {% endif %}
     <div class="card-foot"><span>Showing 1 to 4 of 4</span>
       <nav aria-label="Pages">
         <ul class="pagination pagination-sm mb-0">
@@ -120,39 +97,73 @@
       </nav>
     </div>
   </div>
-  <div class="modal fade" id="warehouseModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="warehouseModal01" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">
-      <form class="modal-content" action="#" method="post">
+      <form id="warehouseForm" class="modal-content" action="{% url 'add_warehouse_system' %}" method="POST">
+        {% csrf_token %}
         <div class="modal-header">
-          <h2 class="modal-title fs-5">Warehouse details</h2>
+          <h2 class="modal-title fs-5" id="warehouseModalTitle">
+            Warehouse details
+          </h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label">Warehouse name</label>
-              <input type="text" class="form-control" placeholder="Main warehouse" value="">
+              <label for="{{ form.name.id_for_label }}" class="form-label">
+                {{ form.name.label }}
+              </label>
+              {{ form.name }}
+              {% for error in form.name.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
             <div class="col-sm-5">
-              <label class="form-label">Code</label>
-              <input type="text" class="form-control" placeholder="WH-05" value="">
-              <div class="form-text">Short and unique, like WH-05.</div>
+              <label for="{{ form.code.id_for_label }}" class="form-label">
+                {{ form.code.label }}
+              </label>
+              {{ form.code }}
+              <div class="form-text">
+                Short and unique, like WH-05.
+              </div>
+              {% for error in form.code.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
             <div class="col-sm-7">
-              <label class="form-label">Status</label>
-              <select class="form-select">
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
+              <label for="{{ form.status.id_for_label }}" class="form-label">
+                {{ form.status.label }}
+              </label>
+              {{ form.status }}
+              {% for error in form.status.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
             <div class="col-12">
-              <label class="form-label">Location</label>
-              <input type="text" class="form-control" placeholder="City, street" value="">
+              <label for="{{ form.location.id_for_label }}" class="form-label">
+                {{ form.location.label }}
+              </label>
+              {{ form.location }}
+              {% for error in form.location.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
             <div class="col-12">
-              <label class="form-label">Notes</label>
-              <textarea class="form-control" rows="2" placeholder="Opening hours, gate access, contact person"></textarea>
+              <label for="{{ form.notes.id_for_label }}" class="form-label">
+                {{ form.notes.label }}
+              </label>
+              {{ form.notes }}
+              {% for error in form.notes.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
+            {% for error in form.non_field_errors %}
+            <div class="col-12">
+              <div class="alert alert-danger mb-0">
+                {{ error }}
+              </div>
+            </div>
+            {% endfor %}
           </div>
         </div>
         <div class="modal-footer">
@@ -167,4 +178,57 @@
     </div>
   </div>
 </main>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("warehouseModal01");
+    const form = document.getElementById("warehouseForm");
+    const title = document.getElementById("warehouseModalTitle");
+    const submitButton = document.getElementById("warehouseSubmitButton");
+
+    const fields = {
+      name: document.getElementById("{{ form.name.id_for_label }}"),
+      code: document.getElementById("{{ form.code.id_for_label }}"),
+      status: document.getElementById("{{ form.status.id_for_label }}"),
+      location: document.getElementById("{{ form.location.id_for_label }}"),
+      notes: document.getElementById("{{ form.notes.id_for_label }}")
+    };
+
+    const addAction = "{% url 'add_warehouse_system' %}";
+    const editActionTemplate = "{% url 'edit_warehouse_system' 0 %}";
+
+    modal.addEventListener("show.bs.modal", function (event) {
+      const button = event.relatedTarget;
+
+      if (!button || button.dataset.mode !== "edit") {
+        form.action = addAction;
+        title.textContent = "Add warehouse";
+        submitButton.textContent = "Add warehouse";
+
+        form.reset();
+        return;
+      }
+
+      fields.name.value = button.dataset.name || "";
+      fields.code.value = button.dataset.code || "";
+      fields.status.value = button.dataset.status || "active";
+      fields.location.value = button.dataset.location || "";
+      fields.notes.value = button.dataset.notes || "";
+
+      form.action = editActionTemplate.replace(
+        "/0/",
+        `/${button.dataset.id}/`
+      );
+
+      title.textContent = "Edit warehouse";
+      submitButton.textContent = "Save changes";
+    });
+
+    modal.addEventListener("hidden.bs.modal", function () {
+      form.reset();
+      form.action = addAction;
+      title.textContent = "Add warehouse";
+      submitButton.textContent = "Add warehouse";
+    });
+  });
+</script>
 {% endblock %}
