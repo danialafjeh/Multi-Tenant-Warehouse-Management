@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db.models import Q
 from organizations.models import Membership
 from .models import Warehouse
 from django.db import IntegrityError
@@ -22,6 +24,8 @@ def warehouses_management_page(request):
     if membership is None:
         messages.error(request,"You do not have permission to access this page.")
         return redirect("home_page")
+    
+    search_query = request.GET.get("search", "").strip()
 
     warehouses = (
         Warehouse.objects
@@ -29,12 +33,21 @@ def warehouses_management_page(request):
         .order_by("name")
     )
 
+    if search_query:
+        warehouses = warehouses.filter(Q(name__icontains=search_query) | Q(code__iexact=search_query))
+ 
+    paginator = Paginator(warehouses, 3)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
     form = WarehouseForm()
 
     context = {
         "membership": membership,
-        "warehouses": warehouses,
+        "warehouses": page_obj,
+        "page_obj": page_obj,
+        "paginator": paginator,
         "form": form,
+        "search_query": search_query
     }
 
     return render(request, "warehouses.html", context)
