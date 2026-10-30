@@ -132,7 +132,7 @@
             </div>
             <div class="col-sm-6">
               <label for="{{ form.category.id_for_label }}" class="form-label">
-                Category
+                Category (Optional)
               </label>
               {{ form.category }}
               {% for error in form.category.errors %}
@@ -162,7 +162,7 @@
             </div>
             <div class="col-12">
               <label for="{{ form.description.id_for_label }}" class="form-label">
-                Description
+                Description (Optional)
               </label>
               {{ form.description }}
               {% for error in form.description.errors %}

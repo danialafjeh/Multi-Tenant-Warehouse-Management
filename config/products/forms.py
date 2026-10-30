@@ -55,7 +55,7 @@ class ProductForm(forms.ModelForm):
         widget=forms.Textarea(attrs={
             "class": "form-control",
             "rows": 2,
-            "placeholder": "Product description (optional)",
+            "placeholder": "Product description",
         }),
     )
 
