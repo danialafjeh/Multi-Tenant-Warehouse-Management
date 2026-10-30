@@ -8,17 +8,19 @@
       <h1>Products</h1>
       <p>Manage your products and organize them into categories.</p>
     </div>
+    {% if current_membership.role == "manager" or current_membership.role == "staff" %}
     <div class="d-flex gap-2 flex-wrap">
       <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#productModal">
         <i class="bi bi-plus-lg me-1"></i>Add product
       </button>
-      <a class="btn btn-primary" href="{% url 'categories_management' %}">
+      <a class="btn btn-primary" href="{% url 'categories_management_page' %}">
         Manage categories
       </a>
-      <a class="btn btn-primary" href="{% url 'units_of_measure_management' %}">
+      <a class="btn btn-primary" href="{% url 'units_of_measure_management_page' %}">
         Manage units of measure
       </a>
     </div>
+    {% endif %}
   </div>
   <div class="card">
     <div class="toolbar">
@@ -28,13 +30,6 @@
         </span>
         <input type="search" class="form-control" placeholder="Search by name or SKU" style="min-width:0">
       </div>
-      <select class="form-select">
-        <option>All categories</option>
-        <option>Labels</option>
-        <option>Packaging</option>
-        <option>Boxes</option>
-        <option>Equipment</option>
-      </select>
     </div>
     <div class="table-responsive">
       <table class="table table-hover">
@@ -46,138 +41,54 @@
             <th>Unit of measure</th>
             <th class="num">Reorder level</th>
             <th class="num">Total on hand</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
+          {% for prod in products %}
           <tr>
-            <td class="sku">TL-100150</td>
+            <td class="sku">{{ prod.sku }}</td>
             <td>
-              <div class="cell-title">Thermal labels 100x150</div>
+              <div class="cell-title">{{ prod.name }}</div>
             </td>
-            <td><span class="badge-soft neutral">Labels</span></td>
-            <td>Roll</td>
-            <td class="num">200</td>
-            <td class="num fw-bold">3,400</td>
+            <td><span class="badge-soft neutral">{{ prod.category }}</span></td>
+            <td>{{ prod.unit }}</td>
+            <td class="num">{{ prod.reorder_level }}</td>
+            <td class="num fw-bold">0</td>
             <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
+              <form action="{% url 'delete_product_system' prod.pk %}" method="POST" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                  Delete
+                </button>
+              </form>
+              <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas"
+                data-bs-target="#productDetail" data-name="{{ prod.name }}" data-sku="{{ prod.sku }}"
+                data-category="{{ prod.category.name|default:'Uncategorized' }}" data-unit="{{ prod.unit.name }}"
+                data-reorder="{{ prod.reorder_level }}"
+                data-description="{{ prod.description|default:'No description provided.' }}">
                 Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Thermal labels 100x150">
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal"
+                data-bs-target="#productModal" data-edit="true" data-id="{{ prod.id }}" data-name="{{ prod.name }}"
+                data-sku="{{ prod.sku }}" data-category="{{ prod.category_id|default:'' }}"
+                data-unit="{{ prod.unit_id }}" data-reorder="{{ prod.reorder_level }}"
+                data-description="{{ prod.description }}" aria-label="Edit {{ prod.name }}">
                 <i class="bi bi-pencil"></i>
               </button>
             </td>
           </tr>
+          {% empty %}
           <tr>
-            <td class="sku">PT-048</td>
-            <td>
-              <div class="cell-title">Packing tape 48mm</div>
-            </td>
-            <td><span class="badge-soft neutral">Packaging</span></td>
-            <td>Piece</td>
-            <td class="num">50</td>
-            <td class="num fw-bold">312</td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Packing tape 48mm">
-                <i class="bi bi-pencil"></i>
-              </button>
+            <td colspan="2" class="text-center py-4 text-muted">
+              No products have been added yet.
             </td>
           </tr>
-          <tr>
-            <td class="sku">PW-500</td>
-            <td>
-              <div class="cell-title">Pallet wrap 500mm</div>
-            </td>
-            <td><span class="badge-soft neutral">Packaging</span></td>
-            <td>Roll</td>
-            <td class="num">20</td>
-            <td class="num fw-bold">140</td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Pallet wrap 500mm">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td class="sku">CB-403020</td>
-            <td>
-              <div class="cell-title">Corrugated box 40x30x20</div>
-            </td>
-            <td><span class="badge-soft neutral">Boxes</span></td>
-            <td>Piece</td>
-            <td class="num">300</td>
-            <td class="num fw-bold">2,980</td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Corrugated box 40x30x20">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td class="sku">BS-20</td>
-            <td>
-              <div class="cell-title">Barcode scanner BS-20</div>
-            </td>
-            <td><span class="badge-soft neutral">Equipment</span></td>
-            <td>Piece</td>
-            <td class="num">5</td>
-            <td class="num fw-bold">14</td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Barcode scanner BS-20">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td class="sku">BM-C</td>
-            <td>
-              <div class="cell-title">Bubble mailer size C</div>
-            </td>
-            <td><span class="badge-soft neutral">Mailers</span></td>
-            <td>Piece</td>
-            <td class="num">200</td>
-            <td class="num fw-bold">1,260</td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Bubble mailer size C">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td class="sku">SG-M</td>
-            <td>
-              <div class="cell-title">Safety gloves M</div>
-            </td>
-            <td><span class="badge-soft neutral">Safety</span></td>
-            <td>Pair</td>
-            <td class="num">40</td>
-            <td class="num fw-bold">58</td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Safety gloves M">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
+    </div>
+    <div class="card-foot">Products can be deleted, but their historical information will remain available in stock
+    movement records.
     </div>
     <div class="card-foot"><span>Showing 1 to 7 of 126</span>
       <nav aria-label="Pages">
@@ -193,44 +104,70 @@
   </div>
   <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">
-      <form class="modal-content" action="#" method="post">
+      <form id="productForm" class="modal-content" action="{% url 'add_product_system' %}" method="POST">
+        {% csrf_token %}
         <div class="modal-header">
-          <h2 class="modal-title fs-5">Product details</h2><button type="button" class="btn-close"
-            data-bs-dismiss="modal" aria-label="Close"></button>
+          <h2 class="modal-title fs-5" id="productModalTitle">Add product</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label">Product name</label>
-              <input type="text" class="form-control" placeholder="Thermal labels 100x150" value="">
-              </div>
+              <label for="{{ form.name.id_for_label }}" class="form-label">
+                Product name
+              </label>
+              {{ form.name }}
+              {% for error in form.name.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
+            </div>
             <div class="col-sm-6">
-              <label class="form-label">SKU</label>
-              <input type="text" class="form-control" placeholder="TL-100150" value="">
+              <label for="{{ form.sku.id_for_label }}" class="form-label">
+                SKU
+              </label>
+              {{ form.sku }}
+              {% for error in form.sku.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
-            <div class="col-sm-6"><label class="form-label">Category</label><select class="form-select">
-                <option>Labels</option>
-                <option>Packaging</option>
-                <option>Boxes</option>
-                <option>Mailers</option>
-                <option>Equipment</option>
-                <option>Safety</option>
-              </select>
+            <div class="col-sm-6">
+              <label for="{{ form.category.id_for_label }}" class="form-label">
+                Category
+              </label>
+              {{ form.category }}
+              {% for error in form.category.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
-            <div class="col-sm-6"><label class="form-label">Unit of measure</label><select class="form-select">
-                <option>Piece</option>
-                <option>Roll</option>
-                <option>Pair</option>
-                <option>Box</option>
-                <option>Kg</option>
-              </select>
+            <div class="col-sm-6">
+              <label for="{{ form.unit.id_for_label }}" class="form-label">
+                Unit of measure
+              </label>
+              {{ form.unit }}
+              {% for error in form.unit.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
-            <div class="col-sm-6"><label class="form-label">Reorder level</label><input type="number" class="form-control" placeholder="0" value="">
-              <div class="form-text">Low stock alerts start below this amount.</div>
+            <div class="col-sm-6">
+              <label for="{{ form.reorder_level.id_for_label }}" class="form-label">
+                Reorder level
+              </label>
+              {{ form.reorder_level }}
+              <div class="form-text">
+                Low stock alerts start below this amount.
+              </div>
+              {% for error in form.reorder_level.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
             <div class="col-12">
-              <label class="form-label">Description</label>
-              <textarea class="form-control" rows="2"></textarea>
+              <label for="{{ form.description.id_for_label }}" class="form-label">
+                Description
+              </label>
+              {{ form.description }}
+              {% for error in form.description.errors %}
+              <div class="text-danger small mt-1">{{ error }}</div>
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -239,7 +176,7 @@
             Cancel
           </button>
           <button type="submit" class="btn btn-primary">
-              Save product
+            Save product
           </button>
         </div>
       </form>
@@ -247,30 +184,32 @@
   </div>
   <div class="offcanvas offcanvas-end" tabindex="-1" id="productDetail" style="width:420px">
     <div class="offcanvas-header border-bottom">
-      <h2 class="offcanvas-title fs-5">Thermal labels 100x150</h2>
+      <h2 class="offcanvas-title fs-5" id="detailProductName">
+        Product details
+      </h2>
       <button class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
       <dl class="detail-list row">
         <div class="col-6">
           <dt>SKU</dt>
-          <dd><span class='sku'>TL-100150</span></dd>
+          <dd><span class="sku" id="detailProductSku"></span></dd>
         </div>
         <div class="col-6">
           <dt>Category</dt>
-          <dd>Labels</dd>
+          <dd id="detailProductCategory"></dd>
         </div>
         <div class="col-6">
           <dt>Unit of measure</dt>
-          <dd>Roll</dd>
+          <dd id="detailProductUnit"></dd>
         </div>
         <div class="col-6">
           <dt>Reorder level</dt>
-          <dd>200</dd>
+          <dd id="detailProductReorder"></dd>
         </div>
         <div class="col-12">
           <dt>Description</dt>
-          <dd>Direct thermal shipping labels, 500 per roll.</dd>
+          <dd id="detailProductDescription"></dd>
         </div>
       </dl>
       <h3 class="h6 mb-2">Stock by warehouse</h3>
@@ -283,25 +222,11 @@
             </tr>
           </thead>
           <tbody>
+            {# Warehouse inventory will be implemented later. #}
             <tr>
-              <td>Main warehouse</td>
-              <td class="num fw-bold">1,650</td>
-            </tr>
-            <tr>
-              <td>North depot</td>
-              <td class="num fw-bold">900</td>
-            </tr>
-            <tr>
-              <td>City store room</td>
-              <td class="num fw-bold">520</td>
-            </tr>
-            <tr>
-              <td>Returns hub</td>
-              <td class="num fw-bold">330</td>
-            </tr>
-            <tr class="table-light">
-              <td class="fw-bold">Total</td>
-              <td class="num fw-bold">3,400</td>
+              <td colspan="2" class="text-center text-muted py-3">
+                Inventory details will be available soon.
+              </td>
             </tr>
           </tbody>
         </table>
@@ -309,4 +234,49 @@
     </div>
   </div>
 </main>
+
+<script>
+  const productDetail = document.getElementById("productDetail");
+  productDetail.addEventListener("show.bs.offcanvas", function (event) {
+    const button = event.relatedTarget;
+    document.getElementById("detailProductName").textContent =
+      button.dataset.name;
+    document.getElementById("detailProductSku").textContent =
+      button.dataset.sku;
+    document.getElementById("detailProductCategory").textContent =
+      button.dataset.category;
+    document.getElementById("detailProductUnit").textContent =
+      button.dataset.unit;
+    document.getElementById("detailProductReorder").textContent =
+      button.dataset.reorder;
+    document.getElementById("detailProductDescription").textContent =
+      button.dataset.description;
+  });
+</script>
+<script>
+  const productModal = document.getElementById("productModal");
+  const productForm = document.getElementById("productForm");
+  const originalAction = productForm.action;
+
+  productModal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    // Edit product
+    if (button.dataset.edit === "true") {
+      document.getElementById("productModalTitle").textContent = "Edit product";
+      productForm.action = `/products/edit/${button.dataset.id}/`;
+      productForm.querySelector("#id_name").value = button.dataset.name;
+      productForm.querySelector("#id_sku").value = button.dataset.sku;
+      productForm.querySelector("#id_category").value = button.dataset.category;
+      productForm.querySelector("#id_unit").value = button.dataset.unit;
+      productForm.querySelector("#id_reorder_level").value = button.dataset.reorder;
+      productForm.querySelector("#id_description").value = button.dataset.description;
+    }
+    // Add product
+    else {
+      document.getElementById("productModalTitle").textContent = "Add product";
+      productForm.action = originalAction;
+      productForm.reset();
+    }
+  });
+</script>
 {% endblock %}

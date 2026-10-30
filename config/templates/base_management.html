@@ -31,8 +31,8 @@
                     href="{% url 'warehouses_management_page' %}">
                     <i class="bi bi-buildings"></i>Warehouses
                 </a>
-                <a class="side-link {% if request.resolver_match.url_name == 'products_management' %}active{% endif %}"
-                    href="{% url 'products_management' %}">
+                <a class="side-link {% if request.resolver_match.url_name == 'products_management_page' %}active{% endif %}"
+                    href="{% url 'products_management_page' %}">
                     <i class="bi bi-box-seam"></i>Products
                 </a>
                 <div class="side-group">Stock</div>

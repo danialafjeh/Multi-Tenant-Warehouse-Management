@@ -103,7 +103,7 @@ class Product(models.Model):
     )
     reorder_level = models.DecimalField(
         max_digits=12,
-        decimal_places=3,
+        decimal_places=1,
         default=0,
     )
     description = models.TextField(
@@ -130,6 +130,39 @@ class Product(models.Model):
         ]
         verbose_name = "Product"
         verbose_name_plural = "Products"
+
+    def __str__(self):
+        return f"{self.name} ({self.sku})"
+
+
+
+class ProductSnapshot(models.Model):
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.PROTECT,
+        related_name="product_snapshots"
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="snapshots"
+    )
+    name = models.CharField(max_length=200)
+    sku = models.CharField(max_length=100)
+    category_name = models.CharField(max_length=150, blank=True)
+    unit_name = models.CharField(max_length=100)
+    unit_abbreviation = models.CharField(max_length=20)
+    reorder_level = models.DecimalField(max_digits=12, decimal_places=1, default=0)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        indexes = [
+            models.Index(fields=["organization", "sku"])
+        ]
 
     def __str__(self):
         return f"{self.name} ({self.sku})"

@@ -15,8 +15,16 @@ def members_management_page(request):
         return redirect('home_page')
     
     membership = (
-        Membership.objects.select_related("organization").get(user=request.user)
+        Membership.
+        objects.
+        select_related("organization")
+        .filter(user=request.user)
+        .first()
     )
+
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
 
     members = (
         Membership.objects
@@ -52,6 +60,7 @@ def add_member_system(request):
     if membership is None:
         messages.error(request,"You do not have permission to perform this action.")
         return redirect("home_page")
+    
     elif  membership.role != "manager":
         messages.error(request,"Only manager can add members.")
         return redirect("members_management_page")
@@ -101,6 +110,10 @@ def remove_member_system(request, user_id):
         user=request.user,
     )
 
+    if current_membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
+
     if current_membership.role != "manager":
         messages.error(request,"You do not have permission to remove members.")
         return redirect('members_management_page')
@@ -132,6 +145,10 @@ def delete_organization_page(request):
         user=request.user,
         is_active=True,
     )
+
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
 
     if membership.role != "manager":
         messages.error(request, 'Only manager can delete the organization.')

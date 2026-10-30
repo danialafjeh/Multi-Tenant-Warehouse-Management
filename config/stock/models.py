@@ -77,10 +77,10 @@ class StockMovement(models.Model):
         on_delete=models.PROTECT,
         related_name="stock_movements",
     )
-    product = models.ForeignKey(
-        Product,
-        on_delete=models.PROTECT,
-        related_name="stock_movements",
+    product_snapshot = models.ForeignKey(
+       "products.ProductSnapshot",
+       on_delete=models.PROTECT,
+       related_name="stock_movements"
     )
     movement_type = models.CharField(
         max_length=20,
