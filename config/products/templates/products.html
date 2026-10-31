@@ -24,12 +24,29 @@
   </div>
   <div class="card">
     <div class="toolbar">
-      <div class="input-group" style="width:260px">
-        <span class="input-group-text bg-white">
+      <form method="GET" class="input-group" style="width: 260px">
+        <button type="submit" class="input-group-text bg-white">
           <i class="bi bi-search text-muted"></i>
-        </span>
-        <input type="search" class="form-control" placeholder="Search by name or SKU" style="min-width:0">
-      </div>
+        </button>
+        <input type="search" name="search-1" class="form-control" placeholder="Search by name or SKU"
+          style="min-width: 0" value="{{ search_query_1 }}">
+      </form>
+      <form method="GET" class="input-group" style="width: 260px">
+        <button type="submit" class="input-group-text bg-white">
+          <i class="bi bi-search text-muted"></i>
+        </button>
+        <select name="search-2" class="form-select" style="min-width: 0">
+          <option value="">All categories</option>
+          <option value="uncategorized" {% if search_query_2 == "uncategorized" %}selected{% endif %}>
+            Uncategorized
+          </option>
+          {% for category in categories %}
+          <option value="{{ category.name }}" {% if search_query_2 == category.name %}selected{% endif %}>
+            {{ category.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </form>
     </div>
     <div class="table-responsive">
       <table class="table table-hover">
@@ -88,18 +105,51 @@
       </table>
     </div>
     <div class="card-foot">Products can be deleted, but their historical information will remain available in stock
-    movement records.
+      movement records.
     </div>
-    <div class="card-foot"><span>Showing 1 to 7 of 126</span>
-      <nav aria-label="Pages">
+    <div class="card-foot d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <span>
+        {% if paginator.count > 0 %}
+        Showing {{ page_obj.start_index }} to {{ page_obj.end_index }}
+        of {{ paginator.count }} products
+        {% else %}
+        Showing 0 to 0 of 0 products
+        {% endif %}
+      </span>
+      {% if paginator.num_pages > 1 %}
+      <nav aria-label="Warehouse pages">
         <ul class="pagination pagination-sm mb-0">
-          <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          <!-- Previous -->
+          <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            {% if page_obj.has_previous %}
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ page_obj.previous_page_number }}">
+              Previous
+            </a>
+            {% else %}
+            <span class="page-link">Previous</span>
+            {% endif %}
+          </li>
+          <!-- Page numbers -->
+          {% for num in paginator.page_range %}
+          <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ num }}">
+              {{ num }}
+            </a>
+          </li>
+          {% endfor %}
+          <!-- Next -->
+          <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            {% if page_obj.has_next %}
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ page_obj.next_page_number }}">
+              Next
+            </a>
+            {% else %}
+            <span class="page-link">Next</span>
+            {% endif %}
+          </li>
         </ul>
       </nav>
+      {% endif %}
     </div>
   </div>
   <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">

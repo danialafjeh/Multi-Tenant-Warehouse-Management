@@ -7,6 +7,8 @@ from .forms import ProductForm, UnitOfMeasureForm, CategoryForm
 from django.db import IntegrityError
 from django.db.models.deletion import ProtectedError
 from django.db import transaction
+from django.core.paginator import Paginator
+from django.db.models import Q
 
 
 # Create your views here.
@@ -27,13 +29,36 @@ def products_management_page(request):
         messages.error(request, "You do not have permission to access this page.")
         return redirect("home_page")
 
+    search_query_name_sku = request.GET.get("search-1", "").strip()
+    search_query_category = request.GET.get("search-2", "").strip()
+
     products = Product.objects.filter(organization=membership.organization).order_by('name')
+    categories = Category.objects.filter(organization=membership.organization).order_by('name')
+
+    if search_query_name_sku:
+        products = Product.objects.filter(Q(name__icontains=search_query_name_sku) | Q(sku__iexact=search_query_name_sku))
+
+    if search_query_category == "uncategorized":
+        products = products.filter(category__isnull=True)
+        
+    elif search_query_category:
+        products = Product.objects.filter(category__name=search_query_category)
+    
+    paginator = Paginator(products, 5)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+   
     
     form = ProductForm(organization=membership.organization)
 
     context = {
         'form':form,
-        'products':products
+        'products':page_obj,
+        'categories':categories,
+        'search_query_1':search_query_name_sku,
+        'search_query_2':search_query_category,
+        'page_obj':page_obj,
+        'paginator':paginator
     }
 
     return render(request, 'products.html', context)

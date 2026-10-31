@@ -56,6 +56,12 @@
               </div>
             </td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2" class="text-center py-4 text-muted">
+              No categories have been added yet.
+            </td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
