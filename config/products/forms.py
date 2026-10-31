@@ -111,3 +111,29 @@ class UnitOfMeasureForm(forms.ModelForm):
             "name",
             "abbreviation",
         ]
+
+
+
+class CategoryForm(forms.ModelForm):
+    name = forms.CharField(
+        max_length=100,
+        label="Category name",
+        widget=forms.TextInput(attrs={
+            "class": "form-control",
+            "id": "categoryName",
+        }),
+    )
+
+    description = forms.CharField(
+        required=False,
+        label="Description",
+        widget=forms.Textarea(attrs={
+            "class": "form-control",
+            "rows": 2,
+            "id": "categoryDescription",
+        }),
+    )
+
+    class Meta:
+        model = Category
+        fields = ["name", "description"]

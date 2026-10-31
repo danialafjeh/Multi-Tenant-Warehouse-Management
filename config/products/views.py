@@ -3,7 +3,7 @@ from django.contrib import messages
 from organizations.models import Membership
 from stock.models import Inventory
 from .models import Category, UnitOfMeasure, Product
-from .forms import ProductForm, UnitOfMeasureForm
+from .forms import ProductForm, UnitOfMeasureForm, CategoryForm
 from django.db import IntegrityError
 from django.db.models.deletion import ProtectedError
 from django.db import transaction
@@ -37,48 +37,6 @@ def products_management_page(request):
     }
 
     return render(request, 'products.html', context)
-
-
-
-def categories_management(request):
-    return render(request, 'categories.html', {})
-
-
-
-def units_of_measure_management_page(request):
-    if not request.user.is_authenticated:
-        messages.error(request, "Please log in to access the dashboard.")
-        return redirect("home_page")
-         
-    membership = (
-        Membership.objects
-        .select_related("organization")
-        .filter(user=request.user)
-        .first()
-    )
-
-    if membership is None:
-        messages.error(request, "You do not have permission to access this page.")
-        return redirect("home_page")
-    
-    if membership.role not in ['manager','staff']:
-        messages.error(request, "Only manager and staff can add units of measure.")
-        return redirect("products_management_page")
-
-    units_of_measure = (
-        UnitOfMeasure.objects
-        .filter(organization=membership.organization)
-        .order_by('name')
-    )
-
-    form = UnitOfMeasureForm()
-
-    context = {
-        'form':form,
-        'units':units_of_measure
-    }
-
-    return render(request, 'unitsofmeasure.html', context)
 
 
 
@@ -262,6 +220,228 @@ def delete_product_system(request, pk):
 
     messages.success(request, "Product deleted successfully.")
     return redirect("products_management_page")
+
+
+
+def categories_management_page(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Please log in to access the dashboard.")
+        return redirect("home_page")
+    
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+    
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
+
+    categories = Category.objects.filter(organization=membership.organization).order_by('name')
+
+    form = CategoryForm()
+
+    context = {
+        'form':form,
+        'categories':categories
+    }
+
+    return render(request, 'categories.html', context)
+
+
+
+def add_category_system(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Please log in to access the dashboard.")
+        return redirect("home_page")
+
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
+
+    if membership.role not in ["manager", "staff"]:
+        messages.error(request, "You do not have permission to add categories.")
+        return redirect("categories_management_page")
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST)
+
+        if form.is_valid():
+            category = form.save(commit=False)
+            category.organization = membership.organization
+
+            try:
+                category.save()
+            except IntegrityError:
+                messages.error(
+                    request,
+                    "Error, unable to create the category."
+                    "Please check if it's already exists."
+                )
+                return redirect("categories_management_page")
+
+            messages.success(request, "Category added successfully.")
+        else:
+            for errors in form.errors.values():
+                for error in errors:
+                    messages.error(request, error)
+
+        return redirect("categories_management_page")
+    else:
+        messages.error(request, "Invalid request method.")
+        return redirect("home_page")
+
+
+
+def edit_category_system(request, pk):
+    if not request.user.is_authenticated:
+        messages.error(request, "Please log in to access the dashboard.")
+        return redirect("home_page")
+
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
+
+    if membership.role not in ["manager", "staff"]:
+        messages.error(request, "You do not have permission to edit categories.")
+        return redirect("categories_management_page")
+
+    category = Category.objects.filter(
+        id=pk,
+        organization=membership.organization,
+    ).first()
+
+    if category is None:
+        messages.error(request, "Category not found.")
+        return redirect("categories_management_page")
+
+    if request.method == "POST":
+        form = CategoryForm(request.POST, instance=category)
+
+        if form.is_valid():
+            try:
+                form.save()
+            except IntegrityError:
+                messages.error(
+                    request,
+                    "Error, unable to update the category."
+                    "Please check if it's already exists."
+                )
+                return redirect("categories_management_page")
+
+            messages.success(request, "Category updated successfully.")
+        else:
+            for errors in form.errors.values():
+                for error in errors:
+                    messages.error(request, error)
+
+        return redirect("categories_management_page")
+    else:
+        messages.error(request, "Invalid request method.")
+        return redirect("home_page")
+
+
+
+def delete_category_system(request, pk):
+    if not request.user.is_authenticated:
+        messages.error(request, "Please log in to access the dashboard.")
+        return redirect("home_page")
+
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+
+    if membership is None:
+        messages.error(request, "You are not a member of any organization.")
+        return redirect("home_page")
+
+    if membership.role not in ["manager", "staff"]:
+        messages.error(request, "You do not have permission to delete categories.")
+        return redirect("categories_management_page")
+
+    if request.method == "POST":
+        category = Category.objects.filter(
+            pk=pk,
+            organization=membership.organization,
+        ).first()
+
+        if category is None:
+            messages.error(request, "Category not found.")
+            return redirect("categories_management_page")
+
+        with transaction.atomic():
+            Product.objects.filter(
+                category=category,
+                organization=membership.organization,
+            ).update(category=None)
+
+            category.delete()
+
+        messages.success(
+            request,
+            "Category deleted successfully. Related products are now uncategorized.",
+        )
+
+        return redirect("categories_management_page")
+    else:
+        messages.error(request,'Invalid request method.')
+        return redirect("home_page")
+
+
+
+def units_of_measure_management_page(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Please log in to access the dashboard.")
+        return redirect("home_page")
+         
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
+    
+    if membership.role not in ['manager','staff']:
+        messages.error(request, "Only manager and staff can add units of measure.")
+        return redirect("products_management_page")
+
+    units_of_measure = (
+        UnitOfMeasure.objects
+        .filter(organization=membership.organization)
+        .order_by('name')
+    )
+
+    form = UnitOfMeasureForm()
+
+    context = {
+        'form':form,
+        'units':units_of_measure
+    }
+
+    return render(request, 'unitsofmeasure.html', context)
 
 
 

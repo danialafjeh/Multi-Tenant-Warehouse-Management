@@ -20,104 +20,47 @@
         <thead>
           <tr>
             <th>Category</th>
-            <th></th>
+            <th>Description</th>
+            <th>Created at</th>
+            <th>Updated at</th>
           </tr>
         </thead>
         <tbody>
+          {% for category in categories %}
           <tr>
             <td>
-              <div class="cell-title">Thermal labels 100x150</div>
+              <div class="cell-title">{{ category.name }}</div>
             </td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Thermal labels 100x150">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
             <td>
-              <div class="cell-title">Packing tape 48mm</div>
+              {% if category.description %}
+              {{ category.description }}
+              {% else %}
+              None
+              {% endif %}
             </td>
+            <td>{{ category.created_at|date:"M d, Y" }}</td>
+            <td>{{ category.updated_at|date:"M d, Y" }}</td>
             <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Packing tape 48mm">
-                <i class="bi bi-pencil"></i>
-              </button>
+              <div class="d-inline-flex align-items-center gap-2">
+                <form method="POST" action="{% url 'delete_category_system' category.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-danger btn-sm">
+                    Delete
+                  </button>
+                </form>
+                <button type="button" class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal"
+                  data-bs-target="#productModal" data-id="{{ category.id }}" data-name="{{ category.name }}"
+                  data-description="{{ category.description }}" aria-label="Edit {{ category.name }}">
+                  <i class="bi bi-pencil"></i>
+                </button>
+              </div>
             </td>
           </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Pallet wrap 500mm</div>
-            </td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Pallet wrap 500mm">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Corrugated box 40x30x20</div>
-            </td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Corrugated box 40x30x20">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Barcode scanner BS-20</div>
-            </td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Barcode scanner BS-20">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Bubble mailer size C</div>
-            </td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Bubble mailer size C">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Safety gloves M</div>
-            </td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#productDetail">
-                Details
-              </button> 
-              <button class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal" data-bs-target="#productModal" aria-label="Edit Safety gloves M">
-                <i class="bi bi-pencil"></i>
-              </button>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
+    <div class="card-foot">Deleting a category will leave its associated products uncategorized.</div>
     <div class="card-foot"><span>Showing 1 to 7 of 126</span>
       <nav aria-label="Pages">
         <ul class="pagination pagination-sm mb-0">
@@ -132,20 +75,24 @@
   </div>
   <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered ">
-      <form class="modal-content" action="#" method="post">
+      <form class="modal-content" id="categoryForm" action="{% url 'add_category_system' %}" method="POST">
+        {% csrf_token %}
         <div class="modal-header">
-          <h2 class="modal-title fs-5">Category details</h2><button type="button" class="btn-close"
-            data-bs-dismiss="modal" aria-label="Close"></button>
+          <h2 class="modal-title fs-5" id="categoryModalTitle">
+            Category details
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          </button>
         </div>
         <div class="modal-body">
           <div class="row g-3">
             <div class="col-12">
-              <label class="form-label">Category name</label>
-              <input type="text" class="form-control" value="">
-              </div>
+              {{ form.name.label_tag }}
+              {{ form.name }}
+            </div>
             <div class="col-12">
-              <label class="form-label">Description</label>
-              <textarea class="form-control" rows="2"></textarea>
+              {{ form.description.label_tag }}
+              {{ form.description }}
             </div>
           </div>
         </div>
@@ -154,59 +101,39 @@
             Cancel
           </button>
           <button type="submit" class="btn btn-primary">
-              Save category
+            Save category
           </button>
         </div>
       </form>
     </div>
   </div>
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="productDetail" style="width:420px">
-    <div class="offcanvas-header border-bottom">
-      <h2 class="offcanvas-title fs-5">Thermal labels 100x150</h2>
-      <button class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <dl class="detail-list row">
-        
-        <div class="col-6">
-          <dt>Category</dt>
-          <dd>Labels</dd>
-        </div>
-        <div class="col-12">
-          <dt>Description</dt>
-          <dd>Direct thermal shipping labels, 500 per roll.</dd>
-        </div>
-      </dl>
-      <h3 class="h6 mb-2">Products in this category</h3>
-      <div class="card">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th class="num">SKU</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Thermal labels 100x150</td>
-              <td class="num fw-bold">TL-100150</td>
-            </tr>
-            <tr>
-              <td>Thermal labels 100x150</td>
-              <td class="num fw-bold">TL-100150</td>
-            </tr>
-            <tr>
-              <td>Thermal labels 100x150</td>
-              <td class="num fw-bold">TL-100150</td>
-            </tr>
-            <tr>
-              <td>Thermal labels 100x150</td>
-              <td class="num fw-bold">TL-100150</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </main>
+
+<script>
+  const categoryModal = document.getElementById("productModal");
+  const categoryForm = document.getElementById("categoryForm");
+  categoryModal.addEventListener("show.bs.modal", function (event) {
+    const button = event.relatedTarget;
+    const categoryId = button.getAttribute("data-id");
+    const categoryName = button.getAttribute("data-name");
+    const categoryDescription = button.getAttribute("data-description");
+    const nameField = document.getElementById("categoryName");
+    const descriptionField = document.getElementById("categoryDescription");
+    const modalTitle = document.getElementById("categoryModalTitle");
+    const submitButton = document.getElementById("categorySubmitButton");
+    if (categoryId) {
+      nameField.value = categoryName;
+      descriptionField.value = categoryDescription;
+      categoryForm.action = `${window.location.origin}/products/categories/edit/${categoryId}/`;
+      modalTitle.textContent = "Edit category";
+      submitButton.textContent = "Update category";
+    } else {
+      nameField.value = "";
+      descriptionField.value = "";
+      categoryForm.action = "{% url 'add_category_system' %}";
+      modalTitle.textContent = "Add category";
+      submitButton.textContent = "Save category";
+    }
+  });
+</script>
 {% endblock %}
