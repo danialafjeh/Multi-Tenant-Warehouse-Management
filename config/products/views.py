@@ -40,7 +40,7 @@ def products_management_page(request):
 
     if search_query_category == "uncategorized":
         products = products.filter(category__isnull=True)
-        
+
     elif search_query_category:
         products = Product.objects.filter(category__name=search_query_category)
     
@@ -266,11 +266,16 @@ def categories_management_page(request):
 
     categories = Category.objects.filter(organization=membership.organization).order_by('name')
 
+    paginator = Paginator(categories, 5)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
     form = CategoryForm()
 
     context = {
         'form':form,
-        'categories':categories
+        'categories':page_obj,
+        'page_obj':page_obj,
+        'paginator':paginator
     }
 
     return render(request, 'categories.html', context)
