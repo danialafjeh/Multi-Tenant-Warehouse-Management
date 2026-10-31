@@ -464,11 +464,16 @@ def units_of_measure_management_page(request):
         .order_by('name')
     )
 
+    paginator = Paginator(units_of_measure, 5)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
     form = UnitOfMeasureForm()
 
     context = {
         'form':form,
-        'units':units_of_measure
+        'units':page_obj,
+        'page_obj':page_obj,
+        'paginator':paginator
     }
 
     return render(request, 'unitsofmeasure.html', context)
