@@ -9,10 +9,10 @@
       <p>Current quantity of each product in each warehouse.</p>
     </div>
     <div class="d-flex gap-2 flex-wrap">
-      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
+      <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#stockInModal">
         <i class="bi bi-plus-lg me-1"></i>Stock in
       </button>
-      <button class="btn btn-out" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
+      <button class="btn btn-out" data-bs-toggle="modal" data-bs-target="#stockOutModal" data-movement="out">
         Stock out
       </button>
       <button class="btn btn-move" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
@@ -51,157 +51,32 @@
             <th class="num">On hand</th>
             <th class="num">Reorder level</th>
             <th>Status</th>
-            <th></th>
+            <th>Updated at</th>
           </tr>
         </thead>
         <tbody>
+          {% for item in inventory %}
           <tr>
             <td>
-              <div class="cell-title">Thermal labels 100x150</div>
-              <div class="cell-sub sku">TL-100150</div>
+              <div class="cell-title">{{ item.product.name }}</div>
+              <div class="cell-sub sku">SKU:{{ item.product.sku }}</div>
             </td>
-            <td>Main warehouse</td>
-            <td class="num fw-bold">1,650</td>
-            <td class="num text-muted">200</td>
+            <td>
+              <div class="cell-title">{{ item.warehouse.name }}</div>
+              <div class="cell-sub sku">{{ item.warehouse.code }}</div>
+            </td>
+            <td class="num fw-bold">{{ item.quantity }}</td>
+            <td class="num text-muted">{{ item.product.reorder_level }}</td>
+            {% if item.stock_status == "in_stock" %}
             <td><span class="badge-soft ok">In stock</span></td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
-                In
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
-                Out
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
-                Transfer
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Thermal labels 100x150</div>
-              <div class="cell-sub sku">TL-100150</div>
-            </td>
-            <td>North depot</td>
-            <td class="num fw-bold">900</td>
-            <td class="num text-muted">200</td>
-            <td><span class="badge-soft ok">In stock</span></td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
-                In
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
-                Out
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
-              Transfer
-            </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Packing tape 48mm</div>
-              <div class="cell-sub sku">PT-048</div>
-            </td>
-            <td>North depot</td>
-            <td class="num fw-bold">12</td>
-            <td class="num text-muted">50</td>
+            {% elif item.stock_status == "low_stock" %}
             <td><span class="badge-soft low">Low stock</span></td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
-                In
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
-                Out
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
-                Transfer
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Packing tape 48mm</div>
-              <div class="cell-sub sku">PT-048</div>
-            </td>
-            <td>Main warehouse</td>
-            <td class="num fw-bold">240</td>
-            <td class="num text-muted">50</td>
-            <td><span class="badge-soft ok">In stock</span></td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
-                In
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
-                Out
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
-                Transfer
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Pallet wrap 500mm</div>
-              <div class="cell-sub sku">PW-500</div>
-            </td>
-            <td>City store room</td>
-            <td class="num fw-bold">0</td>
-            <td class="num text-muted">20</td>
+            {% else %}
             <td><span class="badge-soft empty">Out of stock</span></td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
-                In
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
-                Out
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
-                Transfer
-              </button>
-            </td>
+            {% endif %}
+            <td>{{ item.updated_at }}</td>
           </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Barcode scanner BS-20</div>
-              <div class="cell-sub sku">BS-20</div>
-            </td>
-            <td>Main warehouse</td>
-            <td class="num fw-bold">3</td>
-            <td class="num text-muted">5</td>
-            <td><span class="badge-soft low">Low stock</span></td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
-                In
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
-                Out
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
-                Transfer
-              </button>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="cell-title">Safety gloves M</div>
-              <div class="cell-sub sku">SG-M</div>
-            </td>
-            <td>Returns hub</td>
-            <td class="num fw-bold">18</td>
-            <td class="num text-muted">40</td>
-            <td><span class="badge-soft low">Low stock</span></td>
-            <td class="text-end text-nowrap">
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="in">
-                In
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="out">
-                Out
-              </button> 
-              <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#movementModal" data-movement="transfer">
-                Transfer
-              </button>
-            </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -217,61 +92,146 @@
       </nav>
     </div>
   </div>
-  <div class="modal fade" id="movementModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered ">
-      <form class="modal-content" action="#" method="post">
+  <div class="modal fade" id="stockInModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" action="{% url 'stock_in_system' %}" method="POST">
+        {% csrf_token %}
         <div class="modal-header">
-          <h2 class="modal-title fs-5" id="movementTitle">Record stock in</h2>
+          <h2 class="modal-title fs-5">Record stock in</h2>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="row g-3">
-            <div class="col-12"><label class="form-label">Movement type</label>
-              <div class="btn-group type-switch w-100" role="group">
-                <input type="radio" class="btn-check" name="movement_type" id="t_in" value="in" checked>
-                <label class="btn btn-outline-secondary" for="t_in">Stock in</label>
-                <input type="radio" class="btn-check" name="movement_type" id="t_out"value="out">
-                <label class="btn btn-outline-secondary" for="t_out">Stock out</label>
-                <input type="radio" class="btn-check" name="movement_type" id="t_transfer" value="transfer">
-                <label class="btn btn-outline-secondary" for="t_transfer">Transfer</label>
+            <div class="col-12">
+              <label for="{{ stock_in_form.product.id_for_label }}" class="form-label">
+                {{ stock_in_form.product.label }}
+              </label>
+              {{ stock_in_form.product }}
+              {% if stock_in_form.product.errors %}
+              <div class="text-danger small mt-1">
+                {{ stock_in_form.product.errors }}
               </div>
-            </div>
-            <div class="col-12"><label class="form-label">Product</label><select class="form-select">
-                <option>Thermal labels 100x150</option>
-                <option>Packing tape 48mm</option>
-                <option>Pallet wrap 500mm</option>
-                <option>Corrugated box 40x30x20</option>
-                <option>Barcode scanner BS-20</option>
-              </select></div>
-            <div class="col-12 d-none" id="fromBox"><label class="form-label">From warehouse</label><select
-                class="form-select">
-                <option>Main warehouse</option>
-                <option>North depot</option>
-                <option>City store room</option>
-                <option>Returns hub</option>
-              </select></div>
-            <div class="col-12" id="toBox"><label class="form-label">To warehouse</label><select class="form-select">
-                <option>Main warehouse</option>
-                <option>North depot</option>
-                <option>City store room</option>
-                <option>Returns hub</option>
-              </select></div>
-            <div class="col-sm-5">
-              <label class="form-label">Quantity</label>
-              <input type="number" class="form-control" placeholder="0" value="">
+              {% endif %}
             </div>
             <div class="col-12">
-              <label class="form-label">Notes</label>
-              <textarea class="form-control" rows="2" placeholder="Why is this stock moving?"></textarea>
+              <label for="{{ stock_in_form.to_warehouse.id_for_label }}" class="form-label">
+                {{ stock_in_form.to_warehouse.label }}
+              </label>
+              {{ stock_in_form.to_warehouse }}
+              {% if stock_in_form.to_warehouse.errors %}
+              <div class="text-danger small mt-1">
+                {{ stock_in_form.to_warehouse.errors }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="col-sm-5">
+              <label for="{{ stock_in_form.quantity.id_for_label }}" class="form-label">
+                {{ stock_in_form.quantity.label }}
+              </label>
+              {{ stock_in_form.quantity }}
+              {% if stock_in_form.quantity.errors %}
+              <div class="text-danger small mt-1">
+                {{ stock_in_form.quantity.errors }}
+              </div>
+              {% endif %}
+            </div>
+            <div class="col-12">
+              <label for="{{ stock_in_form.notes.id_for_label }}" class="form-label">
+                {{ stock_in_form.notes.label }}
+              </label>
+              {{ stock_in_form.notes }}
+              {% if stock_in_form.notes.errors %}
+              <div class="text-danger small mt-1">
+                {{ stock_in_form.notes.errors }}
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success" id="movementSubmit">Save stock in</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-success">
+            Save stock in
+          </button>
         </div>
       </form>
     </div>
   </div>
+  <!-- Stock Out Modal -->
+<div class="modal fade" id="stockOutModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form class="modal-content" action="{% url 'stock_out_system' %}" method="POST">
+      {% csrf_token %}
+      <div class="modal-header">
+        <h2 class="modal-title fs-5">
+          Record stock out
+        </h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <!-- Product -->
+          <div class="col-12">
+            <label for="{{ stock_out_form.product.id_for_label }}" class="form-label">
+              {{ stock_out_form.product.label }}
+            </label>
+            {{ stock_out_form.product }}
+            {% if stock_out_form.product.errors %}
+              <div class="text-danger small mt-1">
+                {{ stock_out_form.product.errors }}
+              </div>
+            {% endif %}
+          </div>
+          <!-- From Warehouse -->
+          <div class="col-12">
+            <label for="{{ stock_out_form.from_warehouse.id_for_label }}" class="form-label">
+              {{ stock_out_form.from_warehouse.label }}
+            </label>
+            {{ stock_out_form.from_warehouse }}
+            {% if stock_out_form.from_warehouse.errors %}
+              <div class="text-danger small mt-1">
+                {{ stock_out_form.from_warehouse.errors }}
+              </div>
+            {% endif %}
+          </div>
+          <!-- Quantity -->
+          <div class="col-sm-5">
+            <label for="{{ stock_out_form.quantity.id_for_label }}" class="form-label">
+              {{ stock_out_form.quantity.label }}
+            </label>
+            {{ stock_out_form.quantity }}
+            {% if stock_out_form.quantity.errors %}
+              <div class="text-danger small mt-1">
+                {{ stock_out_form.quantity.errors }}
+              </div>
+            {% endif %}
+          </div>
+          <!-- Notes -->
+          <div class="col-12">
+            <label for="{{ stock_out_form.notes.id_for_label }}" class="form-label">
+              {{ stock_out_form.notes.label }}
+            </label>
+            {{ stock_out_form.notes }}
+            {% if stock_out_form.notes.errors %}
+              <div class="text-danger small mt-1">
+                {{ stock_out_form.notes.errors }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-out">
+          Save stock out
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
 </main>
 {% endblock %}

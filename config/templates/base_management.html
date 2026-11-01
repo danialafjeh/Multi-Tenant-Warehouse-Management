@@ -36,8 +36,8 @@
                     <i class="bi bi-box-seam"></i>Products
                 </a>
                 <div class="side-group">Stock</div>
-                <a class="side-link {% if request.resolver_match.url_name == 'inventory_management' %}active{% endif %}"
-                    href="{% url 'inventory_management' %}">
+                <a class="side-link {% if request.resolver_match.url_name == 'inventory_management_page' %}active{% endif %}"
+                    href="{% url 'inventory_management_page' %}">
                     <i class="bi bi-boxes"></i>Inventory
                 </a>
                 <a class="side-link {% if request.resolver_match.url_name == 'stock_movements_management' %}active{% endif %}"

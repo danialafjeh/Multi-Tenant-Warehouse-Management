@@ -34,8 +34,8 @@
             <td>
               <div class="cell-title">{{ unit.abbreviation }}</div>
             </td>
-            <td>{{ unit.created_at|date:"M d, Y" }}</td>
-            <td>{{ unit.updated_at|date:"M d, Y" }}</td>
+            <td>{{ unit.created_at }}</td>
+            <td>{{ unit.updated_at }}</td>
             <td class="text-end text-nowrap">
               <form action="{% url 'delete_unit_of_measure_system' unit.pk %}" method="POST" class="d-inline">
                 {% csrf_token %}

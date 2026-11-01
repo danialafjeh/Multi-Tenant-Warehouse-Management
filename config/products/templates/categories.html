@@ -38,8 +38,8 @@
               None
               {% endif %}
             </td>
-            <td>{{ category.created_at|date:"M d, Y" }}</td>
-            <td>{{ category.updated_at|date:"M d, Y" }}</td>
+            <td>{{ category.created_at }}</td>
+            <td>{{ category.updated_at }}</td>
             <td class="text-end text-nowrap">
               <div class="d-inline-flex align-items-center gap-2">
                 <form method="POST" action="{% url 'delete_category_system' category.id %}">

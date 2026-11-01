@@ -25,7 +25,7 @@ class Inventory(models.Model):
     )
     quantity = models.DecimalField(
         max_digits=14,
-        decimal_places=3,
+        decimal_places=1,
         default=0,
     )
     updated_at = models.DateTimeField(
@@ -140,9 +140,16 @@ class StockMovement(models.Model):
             models.CheckConstraint(
                 condition=(
                     models.Q(
-                        movement_type__in=["stock_in", "stock_out"],
+                        movement_type="stock_in",
                         warehouse__isnull=False,
                         from_warehouse__isnull=True,
+                        to_warehouse__isnull=True,
+                    )
+                    |
+                    models.Q(
+                        movement_type="stock_out",
+                        warehouse__isnull=True,
+                        from_warehouse__isnull=False,
                         to_warehouse__isnull=True,
                     )
                     |
