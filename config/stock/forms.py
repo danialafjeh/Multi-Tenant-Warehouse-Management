@@ -62,7 +62,7 @@ class StockInForm(forms.Form):
         ).order_by("name")
 
         self.fields["to_warehouse"].queryset = Warehouse.objects.filter(
-            organization=organization,
+            organization=organization, status="active"
         ).order_by("name")
 
 
@@ -120,6 +120,115 @@ class StockOutForm(forms.Form):
 
         self.fields["from_warehouse"].queryset = (
             Warehouse.objects
-            .filter(organization=organization)
+            .filter(organization=organization, status="active")
             .order_by("name")
         )
+
+
+
+class TransferForm(forms.Form):
+    product = forms.ModelChoiceField(
+        queryset=Product.objects.none(),
+        label="Product",
+        empty_label="Select a product",
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+            }
+        ),
+    )
+
+    from_warehouse = forms.ModelChoiceField(
+        queryset=Warehouse.objects.none(),
+        label="From warehouse",
+        empty_label="Select a warehouse",
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+            }
+        ),
+    )
+
+    to_warehouse = forms.ModelChoiceField(
+        queryset=Warehouse.objects.none(),
+        label="To warehouse",
+        empty_label="Select a warehouse",
+        widget=forms.Select(
+            attrs={
+                "class": "form-select",
+            }
+        ),
+    )
+
+    quantity = forms.DecimalField(
+        max_digits=14,
+        decimal_places=3,
+        min_value=0.001,
+        label="Quantity",
+        widget=forms.NumberInput(
+            attrs={
+                "class": "form-control",
+                "min": "0.001",
+                "step": "0.001",
+                "placeholder": "0"
+            }
+        ),
+    )
+
+    notes = forms.CharField(
+        required=False,
+        label="Notes (Optional)",
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 3,
+                "placeholder": "Extra notes..."
+            }
+        ),
+    )
+
+    def __init__(self, *args, organization=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if organization is not None:
+            self.fields["product"].queryset = (
+                Product.objects
+                .filter(organization=organization)
+                .order_by("name")
+            )
+
+            self.fields["from_warehouse"].queryset = (
+                Warehouse.objects
+                .filter(
+                    organization=organization,
+                    status="active",
+                )
+                .order_by("name")
+            )
+
+            self.fields["to_warehouse"].queryset = (
+                Warehouse.objects
+                .filter(
+                    organization=organization,
+                    status="active",
+                )
+                .order_by("name")
+            )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        from_warehouse = cleaned_data.get("from_warehouse")
+        to_warehouse = cleaned_data.get("to_warehouse")
+
+        if (
+            from_warehouse is not None
+            and to_warehouse is not None
+            and from_warehouse == to_warehouse
+        ):
+            self.add_error(
+                "to_warehouse",
+                "The destination warehouse must be different from the source warehouse.",
+            )
+
+        return cleaned_data

@@ -3,8 +3,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from organizations.models import Membership
-from .forms import StockInForm, StockOutForm
-from .services import stock_in, stock_out
+from .forms import StockInForm, StockOutForm, TransferForm
+from .services import stock_in, stock_out, transfer_stock
 from .models import Inventory, StockMovement
 
 # Create your views here.
@@ -34,11 +34,13 @@ def inventory_management_page(request):
 
     stock_in_form = StockInForm(organization=membership.organization)
     stock_out_form = StockOutForm(organization=membership.organization)
+    transfer_form = TransferForm(organization=membership.organization)
 
     context = {
         'inventory':inventory,
         'stock_in_form':stock_in_form,
-        'stock_out_form':stock_out_form
+        'stock_out_form':stock_out_form,
+        'transfer_form':transfer_form
     }
 
     return render(request, 'inventory.html', context)
@@ -94,6 +96,9 @@ def stock_in_system(request):
         )
 
         messages.success(request,"Stock has been added successfully.")
+
+    except ValueError as e:
+        messages.error(request, str(e))
 
     except Exception:
         messages.error(request,"An unexpected error occurred while adding stock.")
@@ -157,6 +162,73 @@ def stock_out_system(request):
 
     except Exception:
         messages.error(request,"An unexpected error occurred while removing stock.")
+
+    return redirect("inventory_management_page")
+
+
+
+def transfer_stock_system(request):
+    if not request.user.is_authenticated:
+        messages.error(
+            request,
+            "Please log in to access the inventory."
+        )
+        return redirect("home_page")
+
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+
+    if membership is None:
+        messages.error(request,"You are not a member of any organization.")
+        return redirect("home_page")
+
+    organization = membership.organization
+
+    if membership.role not in ["manager", "staff"]:
+        messages.error(request,"You do not have permission to record stock movements.")
+        return redirect("inventory_management_page")
+
+    if request.method != "POST":
+        messages.error(request,"Invalid request method.")
+        return redirect("inventory_management_page")
+
+    form = TransferForm(request.POST,organization=organization)
+
+    if not form.is_valid():
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
+
+        return redirect("inventory_management_page")
+
+    product = form.cleaned_data["product"]
+    from_warehouse = form.cleaned_data["from_warehouse"]
+    to_warehouse = form.cleaned_data["to_warehouse"]
+    quantity = form.cleaned_data["quantity"]
+    notes = form.cleaned_data["notes"]
+
+    try:
+        transfer_stock(
+            organization=organization,
+            product=product,
+            from_warehouse=from_warehouse,
+            to_warehouse=to_warehouse,
+            quantity=quantity,
+            notes=notes,
+            user=request.user,
+        )
+
+        messages.success(request,"Stock has been transferred successfully.")
+
+    except ValueError as e:
+        messages.error(request,str(e))
+
+    except Exception:
+        messages.error(request,"An unexpected error occurred while transferring stock.")
 
     return redirect("inventory_management_page")
 
