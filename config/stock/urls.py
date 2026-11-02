@@ -6,6 +6,6 @@ urlpatterns = [
     path('inventory/stock-in/', views.stock_in_system, name='stock_in_system'),
     path('inventory/stock-out/', views.stock_out_system, name='stock_out_system'),
     path('inventory/transfer-stock/', views.transfer_stock_system, name='transfer_stock_system'),
-    path('movements/', views.stock_movements_management, name='stock_movements_management')
+    path('movements/', views.stock_movements_management_page, name='stock_movements_management_page')
 
 ]

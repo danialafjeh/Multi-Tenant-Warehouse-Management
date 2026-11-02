@@ -3,7 +3,7 @@ from django.db import transaction
 from accounts.models import UserSnapshot
 from .models import Membership
 from organizations.models import Organization, Membership
-from products.models import Category, UnitOfMeasure, Product
+from products.models import Category, UnitOfMeasure, Product, ProductSnapshot
 from stock.models import Inventory, StockMovement
 from warehouses.models import Warehouse
 
@@ -63,8 +63,14 @@ def delete_organization(*, organization_id):
         organization=organization,
     ).delete()
 
-    # Delete inventory records before their related products
-    # and warehouses.
+    # Delete snapshots before deleting their related
+    # products and the organization.
+    ProductSnapshot.objects.filter(
+        organization=organization,
+    ).delete()
+
+    # Inventory records must be deleted before their
+    # related products and warehouses.
     Inventory.objects.filter(
         organization=organization,
     ).delete()

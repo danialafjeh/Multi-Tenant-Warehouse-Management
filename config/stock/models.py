@@ -109,7 +109,7 @@ class StockMovement(models.Model):
     )
     quantity = models.DecimalField(
         max_digits=14,
-        decimal_places=3,
+        decimal_places=1,
     )
     notes = models.TextField(
         blank=True,
@@ -148,8 +148,8 @@ class StockMovement(models.Model):
                     |
                     models.Q(
                         movement_type="stock_out",
-                        warehouse__isnull=True,
-                        from_warehouse__isnull=False,
+                        warehouse__isnull=False,
+                        from_warehouse__isnull=True,
                         to_warehouse__isnull=True,
                     )
                     |
@@ -176,6 +176,5 @@ class StockMovement(models.Model):
 
     def __str__(self):
         return (
-            f"{self.get_movement_type_display()} - "
-            f"{self.product.name} - {self.quantity}"
+            f"{self.get_movement_type_display()} - {self.organization}"
         )

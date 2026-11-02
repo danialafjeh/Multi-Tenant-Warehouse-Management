@@ -266,5 +266,37 @@ def transfer_stock_system(request):
 
 
 
-def stock_movements_management(request):
-    return render(request, 'stock_movements.html', {})
+def stock_movements_management_page(request):
+    if not request.user.is_authenticated:
+        messages.error(request, "Please log in to access the dashboard.")
+        return redirect("home_page")
+
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+
+    if membership is None:
+        messages.error(request,"You do not have permission to access this page.")
+        return redirect("home_page")
+
+    stock_movements = (
+        StockMovement.objects
+        .select_related(
+            "product_snapshot",
+            "warehouse",
+            "from_warehouse",
+            "to_warehouse",
+            "recorded_by_snapshot",
+        )
+        .filter(organization=membership.organization)
+        .order_by("-created_at")
+    )
+
+    context = {
+        "stock_movements": stock_movements,
+    }
+
+    return render(request, "stock_movements.html", context)

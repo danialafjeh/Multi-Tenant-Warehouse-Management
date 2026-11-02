@@ -40,8 +40,8 @@
                     href="{% url 'inventory_management_page' %}">
                     <i class="bi bi-boxes"></i>Inventory
                 </a>
-                <a class="side-link {% if request.resolver_match.url_name == 'stock_movements_management' %}active{% endif %}"
-                    href="{% url 'stock_movements_management' %}">
+                <a class="side-link {% if request.resolver_match.url_name == 'stock_movements_management_page' %}active{% endif %}"
+                    href="{% url 'stock_movements_management_page' %}">
                     <i class="bi bi-arrow-left-right"></i>Stock movements
                 </a>
                 <div class="side-group">Organization</div>

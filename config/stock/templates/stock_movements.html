@@ -30,7 +30,7 @@
       </div>
       <div class="align-self-end d-flex gap-2">
         <button class="btn btn-primary" type="submit">Apply filters</button>
-        <a class="btn btn-outline-secondary" href="movements.html">Clear</a>
+        <a class="btn btn-outline-secondary" href="{% url 'stock_movements_management_page' %}">Clear</a>
       </div>
     </form>
     <div class="table-responsive">
@@ -46,86 +46,45 @@
           </tr>
         </thead>
         <tbody>
+          {% for report in stock_movements %}
           <tr>
-            <td class="text-nowrap">19 Oct, 09:42</td>
-            <td><span class="badge-soft in">Stock in</span></td>
+            <td class="text-nowrap">{{ report.created_at }}</td>
+            {% if report.movement_type == 'stock_in' %}
+            <td><span class="badge-soft in text-nowrap">{{ report.get_movement_type_display }}</span></td>
+            {% elif report.movement_type == 'stock_out' %}
+            <td><span class="badge-soft out text-nowrap">{{ report.get_movement_type_display }}</span></td>
+            {% else %}
+            <td><span class="badge-soft move text-nowrap">{{ report.get_movement_type_display }}</span></td>
+            {% endif %}
             <td>
-              <div class="cell-title">Thermal labels 100x150</div>
+              <div class="cell-title">{{ report.product_snapshot.name }}</div>
             </td>
-            <td>Main warehouse</td>
-            <td class="num qty-in">+500</td>
-            <td>Sara Ahmadi</td>
+            {% if report.movement_type == 'stock_in' %}
+            <td>To : {{ report.warehouse.name }}</td>
+            {% elif report.movement_type == 'stock_out' %}
+            <td>From : {{ report.warehouse.name }}</td>
+            {% else %}
+            <td>
+              From : {{ report.from_warehouse.name }}<br>
+              To : {{ report.to_warehouse.name }}
+            </td>
+            {% endif %}
+            {% if  report.movment_type == 'stock_in' %}
+            <td class="num qty-in">+{{ report.quantity }}</td>
+            {% elif report.movement_type == 'stock_out' %}
+            <td class="num qty-in">-{{ report.quantity }}</td>
+            {% else %}
+            <td class="num qty-in">{{ report.quantity }}</td>
+            {% endif %}
+            <td>{{ report.recorded_by_snapshot }}</td>
           </tr>
+          {% empty %}
           <tr>
-            <td class="text-nowrap">19 Oct, 09:10</td>
-            <td><span class="badge-soft out">Stock out</span></td>
-            <td>
-              <div class="cell-title">Packing tape 48mm</div>
+            <td colspan="6" class="text-center py-4 text-muted">
+              No stock movements available yet.
             </td>
-            <td>North depot</td>
-            <td class="num qty-out">-36</td>
-            <td>Omid Karimi</td>
           </tr>
-          <tr>
-            <td class="text-nowrap">18 Oct, 16:25</td>
-            <td><span class="badge-soft move">Transfer</span></td>
-            <td>
-              <div class="cell-title">Pallet wrap 500mm</div>
-            </td>
-            <td>Main warehouse to City store room</td>
-            <td class="num qty-move">24</td>
-            <td>Nima Rahimi</td>
-          </tr>
-          <tr>
-            <td class="text-nowrap">18 Oct, 11:03</td>
-            <td><span class="badge-soft in">Stock in</span></td>
-            <td>
-              <div class="cell-title">Corrugated box 40x30x20</div>
-            </td>
-            <td>Returns hub</td>
-            <td class="num qty-in">+240</td>
-            <td>Omid Karimi</td>
-          </tr>
-          <tr>
-            <td class="text-nowrap">17 Oct, 15:48</td>
-            <td><span class="badge-soft out">Stock out</span></td>
-            <td>
-              <div class="cell-title">Barcode scanner BS-20</div>
-            </td>
-            <td>Main warehouse</td>
-            <td class="num qty-out">-3</td>
-            <td>Sara Ahmadi</td>
-          </tr>
-          <tr>
-            <td class="text-nowrap">17 Oct, 10:12</td>
-            <td><span class="badge-soft in">Stock in</span></td>
-            <td>
-              <div class="cell-title">Bubble mailer size C</div>
-            </td>
-            <td>North depot</td>
-            <td class="num qty-in">+150</td>
-            <td>Nima Rahimi</td>
-          </tr>
-          <tr>
-            <td class="text-nowrap">16 Oct, 14:30</td>
-            <td><span class="badge-soft out">Stock out</span></td>
-            <td>
-              <div class="cell-title">Safety gloves M</div>
-            </td>
-            <td>Returns hub</td>
-            <td class="num qty-out">-22</td>
-            <td>Omid Karimi</td>
-          </tr>
-          <tr>
-            <td class="text-nowrap">16 Oct, 09:05</td>
-            <td><span class="badge-soft in">Stock in</span></td>
-            <td>
-              <div class="cell-title">Barcode scanner BS-20</div>
-            </td>
-            <td>Main warehouse</td>
-            <td class="num qty-in">+10</td>
-            <td>Sara Ahmadi</td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
