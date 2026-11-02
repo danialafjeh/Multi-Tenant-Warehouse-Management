@@ -108,7 +108,7 @@
               To : {{ report.to_warehouse.name }}
             </td>
             {% endif %}
-            {% if report.movment_type == 'stock_in' %}
+            {% if report.movement_type == 'stock_in' %}
             <td class="num qty-in">+{{ report.quantity }}</td>
             {% elif report.movement_type == 'stock_out' %}
             <td class="num qty-in">-{{ report.quantity }}</td>

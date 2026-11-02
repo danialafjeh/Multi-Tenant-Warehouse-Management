@@ -15,7 +15,7 @@ def home_page(request):
 
 def login_system(request):
     if request.user.is_authenticated:
-        return redirect("dashboard_management")
+        return redirect("dashboard_management_pages")
 
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
@@ -30,7 +30,7 @@ def login_system(request):
                 "You have logged in successfully.",
             )
 
-            return redirect("dashboard_management")
+            return redirect("dashboard_management_page")
 
     else:
         form = LoginForm(request)
