@@ -10,7 +10,6 @@ from django.db import transaction
 from django.core.paginator import Paginator
 from django.db.models import Q
 
-
 # Create your views here.
 
 def products_management_page(request):
@@ -36,7 +35,7 @@ def products_management_page(request):
     categories = Category.objects.filter(organization=membership.organization).order_by('name')
 
     if search_query_name_sku:
-        products = Product.objects.filter(Q(name__icontains=search_query_name_sku) | Q(sku__iexact=search_query_name_sku))
+        products = Product.objects.filter(Q(name__icontains=search_query_name_sku) | Q(sku__icontains=search_query_name_sku))
 
     if search_query_category == "uncategorized":
         products = products.filter(category__isnull=True)
@@ -47,8 +46,6 @@ def products_management_page(request):
     paginator = Paginator(products, 5)
     page_obj = paginator.get_page(request.GET.get("page"))
 
-   
-    
     form = ProductForm(organization=membership.organization)
 
     context = {

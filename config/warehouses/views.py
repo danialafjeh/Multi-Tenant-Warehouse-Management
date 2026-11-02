@@ -34,7 +34,7 @@ def warehouses_management_page(request):
     )
 
     if search_query:
-        warehouses = warehouses.filter(Q(name__icontains=search_query) | Q(code__iexact=search_query))
+        warehouses = warehouses.filter(Q(name__icontains=search_query) | Q(code__icontains=search_query))
  
     paginator = Paginator(warehouses, 5)
     page_obj = paginator.get_page(request.GET.get("page"))

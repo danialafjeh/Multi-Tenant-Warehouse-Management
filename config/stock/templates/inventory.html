@@ -24,25 +24,46 @@
   </div>
   <div class="card">
     <div class="toolbar">
-      <div class="input-group" style="width:260px">
-        <span class="input-group-text bg-white">
+      <!-- Product Search -->
+      <form method="GET" class="input-group" style="width:260px">
+        <button type="submit" class="input-group-text bg-white">
           <i class="bi bi-search text-muted"></i>
-        </span>
-        <input type="search" class="form-control" placeholder="Search product or SKU" style="min-width:0">
-      </div>
-      <select class="form-select">
-        <option>All warehouses</option>
-        <option>Main warehouse</option>
-        <option>North depot</option>
-        <option>City store room</option>
-        <option>Returns hub</option>
-      </select>
-      <select class="form-select">
-        <option>All stock levels</option>
-        <option>In stock</option>
-        <option>Low stock</option>
-        <option>Out of stock</option>
-      </select>
+        </button>
+        <input type="search" name="search-1" class="form-control" placeholder="Search product or SKU"
+          value="{{ request.GET.product_search }}" style="min-width:0">
+      </form>
+      <!-- Warehouse Search -->
+      <form method="GET" class="input-group" style="width:260px">
+        <button type="submit" class="input-group-text bg-white">
+          <i class="bi bi-search text-muted"></i>
+        </button>
+        <select name="search-2" class="form-select">
+          <option value="">Search by warehouses</option>
+          {% for warehouse in warehouses %}
+          <option value="{{ warehouse.id }}" {% if request.GET.warehouse == warehouse.id|stringformat:"s" %} selected {% endif %}>
+            {{ warehouse.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </form>
+      <!-- Stock Level Search -->
+      <form method="GET" class="input-group" style="width:260px">
+        <button type="submit" class="input-group-text bg-white">
+          <i class="bi bi-search text-muted"></i>
+        </button>
+        <select name="search-3" class="form-select">
+          <option value="">Search by statuses</option>
+          <option value="in_stock" {% if request.GET.stock_level == "in_stock" %}selected{% endif %}>
+            In stock
+          </option>
+          <option value="low_stock" {% if request.GET.stock_level == "low_stock" %}selected{% endif %}>
+            Low stock
+          </option>
+          <option value="out_of_stock" {% if request.GET.stock_level == "out_of_stock" %}selected{% endif %}>
+            Out of stock
+          </option>
+        </select>
+      </form>
     </div>
     <div class="table-responsive">
       <table class="table table-hover">
@@ -78,20 +99,59 @@
             {% endif %}
             <td>{{ item.updated_at }}</td>
           </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2" class="text-center py-4 text-muted">
+              No inventory records available yet.
+            </td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
-    <div class="card-foot"><span>Showing 1 to 7 of 214</span>
-      <nav aria-label="Pages">
+    <div class="card-foot d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <span>
+        {% if paginator.count > 0 %}
+        Showing {{ page_obj.start_index }} to {{ page_obj.end_index }}
+        of {{ paginator.count }} inventory records
+        {% else %}
+        Showing 0 to 0 of 0 inventory records
+        {% endif %}
+      </span>
+      {% if paginator.num_pages > 1 %}
+      <nav aria-label="Warehouse pages">
         <ul class="pagination pagination-sm mb-0">
-          <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          <!-- Previous -->
+          <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            {% if page_obj.has_previous %}
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ page_obj.previous_page_number }}">
+              Previous
+            </a>
+            {% else %}
+            <span class="page-link">Previous</span>
+            {% endif %}
+          </li>
+          <!-- Page numbers -->
+          {% for num in paginator.page_range %}
+          <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ num }}">
+              {{ num }}
+            </a>
+          </li>
+          {% endfor %}
+          <!-- Next -->
+          <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            {% if page_obj.has_next %}
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ page_obj.next_page_number }}">
+              Next
+            </a>
+            {% else %}
+            <span class="page-link">Next</span>
+            {% endif %}
+          </li>
         </ul>
       </nav>
+      {% endif %}
     </div>
   </div>
   <!-- Stock In Modal -->
@@ -163,164 +223,164 @@
     </div>
   </div>
   <!-- Stock Out Modal -->
-<div class="modal fade" id="stockOutModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <form class="modal-content" action="{% url 'stock_out_system' %}" method="POST">
-      {% csrf_token %}
-      <div class="modal-header">
-        <h2 class="modal-title fs-5">
-          Record stock out
-        </h2>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <!-- Product -->
-          <div class="col-12">
-            <label for="{{ stock_out_form.product.id_for_label }}" class="form-label">
-              {{ stock_out_form.product.label }}
-            </label>
-            {{ stock_out_form.product }}
-            {% if stock_out_form.product.errors %}
+  <div class="modal fade" id="stockOutModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <form class="modal-content" action="{% url 'stock_out_system' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h2 class="modal-title fs-5">
+            Record stock out
+          </h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <!-- Product -->
+            <div class="col-12">
+              <label for="{{ stock_out_form.product.id_for_label }}" class="form-label">
+                {{ stock_out_form.product.label }}
+              </label>
+              {{ stock_out_form.product }}
+              {% if stock_out_form.product.errors %}
               <div class="text-danger small mt-1">
                 {{ stock_out_form.product.errors }}
               </div>
-            {% endif %}
-          </div>
-          <!-- From Warehouse -->
-          <div class="col-12">
-            <label for="{{ stock_out_form.from_warehouse.id_for_label }}" class="form-label">
-              {{ stock_out_form.from_warehouse.label }}
-            </label>
-            {{ stock_out_form.from_warehouse }}
-            {% if stock_out_form.from_warehouse.errors %}
+              {% endif %}
+            </div>
+            <!-- From Warehouse -->
+            <div class="col-12">
+              <label for="{{ stock_out_form.from_warehouse.id_for_label }}" class="form-label">
+                {{ stock_out_form.from_warehouse.label }}
+              </label>
+              {{ stock_out_form.from_warehouse }}
+              {% if stock_out_form.from_warehouse.errors %}
               <div class="text-danger small mt-1">
                 {{ stock_out_form.from_warehouse.errors }}
               </div>
-            {% endif %}
-          </div>
-          <!-- Quantity -->
-          <div class="col-sm-5">
-            <label for="{{ stock_out_form.quantity.id_for_label }}" class="form-label">
-              {{ stock_out_form.quantity.label }}
-            </label>
-            {{ stock_out_form.quantity }}
-            {% if stock_out_form.quantity.errors %}
+              {% endif %}
+            </div>
+            <!-- Quantity -->
+            <div class="col-sm-5">
+              <label for="{{ stock_out_form.quantity.id_for_label }}" class="form-label">
+                {{ stock_out_form.quantity.label }}
+              </label>
+              {{ stock_out_form.quantity }}
+              {% if stock_out_form.quantity.errors %}
               <div class="text-danger small mt-1">
                 {{ stock_out_form.quantity.errors }}
               </div>
-            {% endif %}
-          </div>
-          <!-- Notes -->
-          <div class="col-12">
-            <label for="{{ stock_out_form.notes.id_for_label }}" class="form-label">
-              {{ stock_out_form.notes.label }}
-            </label>
-            {{ stock_out_form.notes }}
-            {% if stock_out_form.notes.errors %}
+              {% endif %}
+            </div>
+            <!-- Notes -->
+            <div class="col-12">
+              <label for="{{ stock_out_form.notes.id_for_label }}" class="form-label">
+                {{ stock_out_form.notes.label }}
+              </label>
+              {{ stock_out_form.notes }}
+              {% if stock_out_form.notes.errors %}
               <div class="text-danger small mt-1">
                 {{ stock_out_form.notes.errors }}
               </div>
-            {% endif %}
+              {% endif %}
+            </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-          Cancel
-        </button>
-        <button type="submit" class="btn btn-out">
-          Save stock out
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-<!-- Transfer Stock Modal -->
-<div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="transferModalLabel">
-                    Transfer stock
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form method="POST" action="{% url 'transfer_stock_system' %}">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <!-- Product -->
-                    <div class="mb-3">
-                        <label for="{{ transfer_form.product.id_for_label }}" class="form-label">
-                            Product
-                        </label>
-                        {{ transfer_form.product }}
-                        {% if transfer_form.product.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ transfer_form.product.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <!-- Source Warehouse -->
-                    <div class="mb-3">
-                        <label for="{{ transfer_form.from_warehouse.id_for_label }}" class="form-label">
-                            From warehouse
-                        </label>
-                        {{ transfer_form.from_warehouse }}
-                        {% if transfer_form.from_warehouse.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ transfer_form.from_warehouse.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <!-- Destination Warehouse -->
-                    <div class="mb-3">
-                        <label for="{{ transfer_form.to_warehouse.id_for_label }}" class="form-label">
-                            To warehouse
-                        </label>
-                        {{ transfer_form.to_warehouse }}
-                        {% if transfer_form.to_warehouse.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ transfer_form.to_warehouse.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <!-- Quantity -->
-                    <div class="mb-3">
-                        <label for="{{ transfer_form.quantity.id_for_label }}" class="form-label">
-                            Quantity
-                        </label>
-                        {{ transfer_form.quantity }}
-                        {% if transfer_form.quantity.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ transfer_form.quantity.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <!-- Notes -->
-                    <div class="mb-3">
-                        <label for="{{ transfer_form.notes.id_for_label }}" class="form-label">
-                            Notes
-                        </label>
-                        {{ transfer_form.notes }}
-                        {% if transfer_form.notes.errors %}
-                            <div class="text-danger small mt-1">
-                                {{ transfer_form.notes.errors }}
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        Cancel
-                    </button>
-                    <button type="submit" class="btn btn-move">
-                        Transfer stock
-                    </button>
-                </div>
-            </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-out">
+            Save stock out
+          </button>
         </div>
+      </form>
     </div>
-</div>
+  </div>
+  <!-- Transfer Stock Modal -->
+  <div class="modal fade" id="transferModal" tabindex="-1" aria-labelledby="transferModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="transferModalLabel">
+            Transfer stock
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form method="POST" action="{% url 'transfer_stock_system' %}">
+          {% csrf_token %}
+          <div class="modal-body">
+            <!-- Product -->
+            <div class="mb-3">
+              <label for="{{ transfer_form.product.id_for_label }}" class="form-label">
+                Product
+              </label>
+              {{ transfer_form.product }}
+              {% if transfer_form.product.errors %}
+              <div class="text-danger small mt-1">
+                {{ transfer_form.product.errors }}
+              </div>
+              {% endif %}
+            </div>
+            <!-- Source Warehouse -->
+            <div class="mb-3">
+              <label for="{{ transfer_form.from_warehouse.id_for_label }}" class="form-label">
+                From warehouse
+              </label>
+              {{ transfer_form.from_warehouse }}
+              {% if transfer_form.from_warehouse.errors %}
+              <div class="text-danger small mt-1">
+                {{ transfer_form.from_warehouse.errors }}
+              </div>
+              {% endif %}
+            </div>
+            <!-- Destination Warehouse -->
+            <div class="mb-3">
+              <label for="{{ transfer_form.to_warehouse.id_for_label }}" class="form-label">
+                To warehouse
+              </label>
+              {{ transfer_form.to_warehouse }}
+              {% if transfer_form.to_warehouse.errors %}
+              <div class="text-danger small mt-1">
+                {{ transfer_form.to_warehouse.errors }}
+              </div>
+              {% endif %}
+            </div>
+            <!-- Quantity -->
+            <div class="mb-3">
+              <label for="{{ transfer_form.quantity.id_for_label }}" class="form-label">
+                Quantity
+              </label>
+              {{ transfer_form.quantity }}
+              {% if transfer_form.quantity.errors %}
+              <div class="text-danger small mt-1">
+                {{ transfer_form.quantity.errors }}
+              </div>
+              {% endif %}
+            </div>
+            <!-- Notes -->
+            <div class="mb-3">
+              <label for="{{ transfer_form.notes.id_for_label }}" class="form-label">
+                Notes
+              </label>
+              {{ transfer_form.notes }}
+              {% if transfer_form.notes.errors %}
+              <div class="text-danger small mt-1">
+                {{ transfer_form.notes.errors }}
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-move">
+              Transfer stock
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </main>
 {% endblock %}

@@ -6,6 +6,8 @@ from organizations.models import Membership
 from .forms import StockInForm, StockOutForm, TransferForm
 from .services import stock_in, stock_out, transfer_stock
 from .models import Inventory, StockMovement
+from warehouses.models import Warehouse
+from django.db.models import Q, F
 
 # Create your views here.
 
@@ -32,12 +34,42 @@ def inventory_management_page(request):
         .order_by('-updated_at') 
     )
 
+    product_search = request.GET.get("search-1", "").strip()
+
+    if product_search:
+        inventory = inventory.filter(
+            Q(product__name__icontains=product_search) |
+            Q(product__sku__icontains=product_search)
+        )
+
+    warehouse_id = request.GET.get("search-2", "").strip()
+
+    if warehouse_id:
+        inventory = inventory.filter(warehouse_id=warehouse_id)
+
+    stock_level = request.GET.get("search-3", "").strip()
+
+    if stock_level == "in_stock":
+        inventory = inventory.filter(quantity__gt=F("product__reorder_level"))
+    elif stock_level == "low_stock":
+        inventory = inventory.filter(quantity__gt=0, quantity__lte=F("product__reorder_level"))
+    elif stock_level == "out_of_stock":
+        inventory = inventory.filter(quantity=0)
+
+    warehouses = Warehouse.objects.filter(organization=membership.organization, status='active').order_by('name')
+
+    paginator = Paginator(inventory, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
     stock_in_form = StockInForm(organization=membership.organization)
     stock_out_form = StockOutForm(organization=membership.organization)
     transfer_form = TransferForm(organization=membership.organization)
 
     context = {
-        'inventory':inventory,
+        'inventory':page_obj,
+        'page_obj':page_obj,
+        'paginator':paginator,
+        'warehouses':warehouses,
         'stock_in_form':stock_in_form,
         'stock_out_form':stock_out_form,
         'transfer_form':transfer_form
