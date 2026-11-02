@@ -268,7 +268,7 @@ def transfer_stock_system(request):
 
 def stock_movements_management_page(request):
     if not request.user.is_authenticated:
-        messages.error(request, "Please log in to access the dashboard.")
+        messages.error(request,"Please log in to access the dashboard.")
         return redirect("home_page")
 
     membership = (
@@ -282,6 +282,8 @@ def stock_movements_management_page(request):
         messages.error(request,"You do not have permission to access this page.")
         return redirect("home_page")
 
+    organization = membership.organization
+
     stock_movements = (
         StockMovement.objects
         .select_related(
@@ -291,12 +293,64 @@ def stock_movements_management_page(request):
             "to_warehouse",
             "recorded_by_snapshot",
         )
-        .filter(organization=membership.organization)
+        .filter(organization=organization)
         .order_by("-created_at")
     )
 
+    date_from = request.GET.get("date_from", "").strip()
+    date_to = request.GET.get("date_to", "").strip()
+    movement_type = request.GET.get("movement_type", "").strip()
+    warehouse_id = request.GET.get("warehouse", "").strip()
+    product = request.GET.get("product", "").strip()
+
+    if date_from:
+        stock_movements = stock_movements.filter(created_at__date__gte=date_from)
+
+    if date_to:
+        stock_movements = stock_movements.filter(created_at__date__lte=date_to)
+
+    if movement_type in {"stock_in","stock_out","transfer"}:
+        stock_movements = stock_movements.filter(movement_type=movement_type)
+
+    if warehouse_id.isdigit():
+        warehouse_id = int(warehouse_id)
+    
+        warehouse_exists = Warehouse.objects.filter(pk=warehouse_id, organization=organization).exists()
+
+        if warehouse_exists:
+            stock_movements = stock_movements.filter(
+                Q(warehouse_id=warehouse_id)
+                | Q(from_warehouse_id=warehouse_id)
+                | Q(to_warehouse_id=warehouse_id)
+            )
+
+    if product:
+        stock_movements = stock_movements.filter(
+            Q(product_snapshot__name__icontains=product)
+            | Q(product_snapshot__sku__icontains=product)
+        )
+
+    paginator = Paginator(stock_movements, 10)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    warehouses = (
+        Warehouse.objects
+        .filter(organization=organization, status='active')
+        .order_by("name")
+    )
+
     context = {
-        "stock_movements": stock_movements,
+        "stock_movements": page_obj,
+        "paginator": paginator,
+        "page_obj": page_obj,
+        "warehouses": warehouses,
+        "filters": {
+            "date_from": date_from,
+            "date_to": date_to,
+            "movement_type": movement_type,
+            "warehouse": str(warehouse_id) if warehouse_id else "",
+            "product": product,
+        },
     }
 
     return render(request, "stock_movements.html", context)

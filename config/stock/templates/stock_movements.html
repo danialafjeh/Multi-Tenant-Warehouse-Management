@@ -10,27 +10,66 @@
     </div>
   </div>
   <div class="card">
-    <form class="toolbar" action="#" method="get">
-      <div><label class="form-label small mb-1">From</label><input type="date" class="form-control"></div>
-      <div><label class="form-label small mb-1">To</label><input type="date" class="form-control"></div>
-      <div><label class="form-label small mb-1">Type</label><select class="form-select">
-          <option>All types</option>
-          <option>Stock in</option>
-          <option>Stock out</option>
-          <option>Transfer</option>
-        </select></div>
-      <div><label class="form-label small mb-1">Warehouse</label><select class="form-select">
-          <option>All warehouses</option>
-          <option>Main warehouse</option>
-          <option>North depot</option>
-          <option>City store room</option>
-          <option>Returns hub</option>
-        </select></div>
-      <div><label class="form-label small mb-1">Product</label><input class="form-control" placeholder="Name or SKU">
+    <form class="toolbar" method="GET">
+      <div>
+        <label class="form-label small mb-1">
+          From
+        </label>
+        <input type="date" name="date_from" class="form-control" value="{{ filters.date_from }}">
+      </div>
+      <div>
+        <label class="form-label small mb-1">
+          To
+        </label>
+        <input type="date" name="date_to" class="form-control" value="{{ filters.date_to }}">
+      </div>
+      <div>
+        <label class="form-label small mb-1">
+          Type
+        </label>
+        <select name="movement_type" class="form-select">
+          <option value="">
+            All types
+          </option>
+          <option value="stock_in" {% if filters.movement_type == "stock_in" %}selected{% endif %}>
+            Stock in
+          </option>
+          <option value="stock_out" {% if filters.movement_type == "stock_out" %}selected{% endif %}>
+            Stock out
+          </option>
+          <option value="transfer" {% if filters.movement_type == "transfer" %}selected{% endif %}>
+            Transfer
+          </option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label small mb-1">
+          Warehouse
+        </label>
+        <select name="warehouse" class="form-select">
+          <option value="">
+            All warehouses
+          </option>
+          {% for warehouse in warehouses %}
+          <option value="{{ warehouse.id }}" {% if filters.warehouse == warehouse.id|stringformat:"s" %}selected{% endif %}>
+            {{ warehouse.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label class="form-label small mb-1">
+          Product
+        </label>
+        <input type="text" name="product" class="form-control" placeholder="Name or SKU" value="{{ filters.product }}">
       </div>
       <div class="align-self-end d-flex gap-2">
-        <button class="btn btn-primary" type="submit">Apply filters</button>
-        <a class="btn btn-outline-secondary" href="{% url 'stock_movements_management_page' %}">Clear</a>
+        <button class="btn btn-primary" type="submit">
+          Apply filters
+        </button>
+        <a class="btn btn-outline-secondary" href="{% url 'stock_movements_management_page' %}">
+          Clear
+        </a>
       </div>
     </form>
     <div class="table-responsive">
@@ -57,7 +96,7 @@
             <td><span class="badge-soft move text-nowrap">{{ report.get_movement_type_display }}</span></td>
             {% endif %}
             <td>
-              <div class="cell-title">{{ report.product_snapshot.name }}</div>
+              <div class="cell-title">{{ report.product_snapshot.name }} ({{ report.product_snapshot.sku }})</div>
             </td>
             {% if report.movement_type == 'stock_in' %}
             <td>To : {{ report.warehouse.name }}</td>
@@ -69,7 +108,7 @@
               To : {{ report.to_warehouse.name }}
             </td>
             {% endif %}
-            {% if  report.movment_type == 'stock_in' %}
+            {% if report.movment_type == 'stock_in' %}
             <td class="num qty-in">+{{ report.quantity }}</td>
             {% elif report.movement_type == 'stock_out' %}
             <td class="num qty-in">-{{ report.quantity }}</td>
@@ -88,16 +127,49 @@
         </tbody>
       </table>
     </div>
-    <div class="card-foot"><span>Showing 1 to 8 of 342</span>
-      <nav aria-label="Pages">
+    <div class="card-foot d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <span>
+        {% if paginator.count > 0 %}
+        Showing {{ page_obj.start_index }} to {{ page_obj.end_index }}
+        of {{ paginator.count }} stock movements
+        {% else %}
+        Showing 0 to 0 of 0 stock movements
+        {% endif %}
+      </span>
+      {% if paginator.num_pages > 1 %}
+      <nav aria-label="Warehouse pages">
         <ul class="pagination pagination-sm mb-0">
-          <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item"><a class="page-link" href="#">Next</a></li>
+          <!-- Previous -->
+          <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+            {% if page_obj.has_previous %}
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ page_obj.previous_page_number }}">
+              Previous
+            </a>
+            {% else %}
+            <span class="page-link">Previous</span>
+            {% endif %}
+          </li>
+          <!-- Page numbers -->
+          {% for num in paginator.page_range %}
+          <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ num }}">
+              {{ num }}
+            </a>
+          </li>
+          {% endfor %}
+          <!-- Next -->
+          <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+            {% if page_obj.has_next %}
+            <a class="page-link" href="?search={{ search_query|urlencode }}&page={{ page_obj.next_page_number }}">
+              Next
+            </a>
+            {% else %}
+            <span class="page-link">Next</span>
+            {% endif %}
+          </li>
         </ul>
       </nav>
+      {% endif %}
     </div>
   </div>
 </main>
