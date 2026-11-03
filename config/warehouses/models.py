@@ -1,5 +1,4 @@
 from django.db import models
-from organizations.models import Organization
 
 # Create your models here.
 
@@ -10,7 +9,7 @@ class Warehouse(models.Model):
     ]
 
     organization = models.ForeignKey(
-        Organization,
+        'organizations.Organization',
         on_delete=models.PROTECT,
         related_name="warehouses",
     )

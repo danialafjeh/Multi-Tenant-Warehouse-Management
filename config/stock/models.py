@@ -1,25 +1,21 @@
 from django.db import models
 from django.contrib.auth.models import User
-from organizations.models import Organization
-from warehouses.models import Warehouse
-from products.models import Product
-from accounts.models import UserSnapshot
 
 # Create your models here.
 
 class Inventory(models.Model):
     organization = models.ForeignKey(
-        Organization,
+        'organizations.Organization',
         on_delete=models.PROTECT,
         related_name="stock_levels",
     )
     warehouse = models.ForeignKey(
-        Warehouse,
+        'warehouses.Warehouse',
         on_delete=models.PROTECT,
         related_name="stock_levels",
     )
     product = models.ForeignKey(
-        Product,
+        'products.Product',
         on_delete=models.PROTECT,
         related_name="stock_levels",
     )
@@ -73,7 +69,7 @@ class StockMovement(models.Model):
     ]
 
     organization = models.ForeignKey(
-        Organization,
+        'organizations.Organization',
         on_delete=models.PROTECT,
         related_name="stock_movements",
     )
@@ -87,21 +83,21 @@ class StockMovement(models.Model):
         choices=MOVEMENT_TYPES,
     )
     warehouse = models.ForeignKey(
-        Warehouse,
+        'warehouses.Warehouse',
         on_delete=models.PROTECT,
         related_name="stock_movements",
         null=True,
         blank=True,
     )
     from_warehouse = models.ForeignKey(
-        Warehouse,
+        'warehouses.Warehouse',
         on_delete=models.PROTECT,
         related_name="outgoing_transfers",
         null=True,
         blank=True,
     )
     to_warehouse = models.ForeignKey(
-        Warehouse,
+        'warehouses.Warehouse',
         on_delete=models.PROTECT,
         related_name="incoming_transfers",
         null=True,
@@ -122,7 +118,7 @@ class StockMovement(models.Model):
         blank=True,
     )
     recorded_by_snapshot = models.ForeignKey(
-        UserSnapshot,
+        'accounts.UserSnapshot',
         on_delete=models.PROTECT,
         related_name="stock_movements",
     )

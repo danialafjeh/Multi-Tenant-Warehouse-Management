@@ -1,11 +1,10 @@
 from django.db import models
-from organizations.models import Organization
 
 # Create your models here.
 
 class Category(models.Model):
     organization = models.ForeignKey(
-        Organization,
+        'organizations.Organization',
         on_delete=models.PROTECT,
         related_name="categories",
     )
@@ -40,7 +39,7 @@ class Category(models.Model):
 
 class UnitOfMeasure(models.Model):
     organization = models.ForeignKey(
-        Organization,
+        'organizations.Organization',
         on_delete=models.PROTECT,
         related_name="units_of_measure",
     )
@@ -79,7 +78,7 @@ class UnitOfMeasure(models.Model):
 
 class Product(models.Model):
     organization = models.ForeignKey(
-        Organization,
+        'organizations.Organization',
         on_delete=models.PROTECT,
         related_name="products",
     )
@@ -138,7 +137,7 @@ class Product(models.Model):
 
 class ProductSnapshot(models.Model):
     organization = models.ForeignKey(
-        Organization,
+        'organizations.Organization',
         on_delete=models.PROTECT,
         related_name="product_snapshots"
     )
