@@ -15,7 +15,7 @@ def home_page(request):
 
 def login_system(request):
     if request.user.is_authenticated:
-        return redirect("dashboard_management_pages")
+        return redirect("dashboard_management_page")
 
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
@@ -41,7 +41,7 @@ def login_system(request):
 
 def signup_system(request):
     if request.user.is_authenticated:
-        return redirect("dashboard_management")
+        return redirect("dashboard_management_page")
 
     if request.method == "POST":
         form = SignUpForm(request.POST)
@@ -72,11 +72,7 @@ def signup_system(request):
     else:
         form = SignUpForm()
 
-    return render(
-        request,
-        "signup.html",
-        {"form": form}
-    )
+    return render(request, "signup.html", {"form": form})
 
 
 
@@ -90,4 +86,4 @@ def logout_system(request):
         messages.success(request, "You have logged out successfully.")
         return redirect("home_page")
 
-    return redirect("dashboard_management")
+    return redirect("dashboard_management_page")
