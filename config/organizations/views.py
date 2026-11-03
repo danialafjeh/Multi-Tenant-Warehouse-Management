@@ -104,6 +104,10 @@ def remove_member_system(request, user_id):
     if not request.user.is_authenticated:
         messages.error(request, 'Please log in to access the dashboard.')
         return redirect('home_page')
+
+    if request.method != "POST":
+        messages.error(request,"Invalid request method.")
+        return redirect("members_management_page")
     
     current_membership = get_object_or_404(
         Membership.objects.select_related("organization"),

@@ -69,7 +69,7 @@
             </td>
             <td class="text-end">
               {% if current_membership.role == "manager" and member.user_id != request.user.id %}
-              <form method="post" action="{% url 'remove_member_system' user_id=member.user_id %}" class="d-inline">
+              <form method="POST" action="{% url 'remove_member_system' user_id=member.user_id %}" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-danger btn-sm">
                   Remove
