@@ -68,7 +68,11 @@ h1,h2,h3,h4,h5{letter-spacing:-.01em;font-weight:700}
 .side-link.active i{color:var(--sr-primary)}
 .org-box{margin-top:auto;border:1px solid var(--sr-line);border-radius:.7rem;padding:.7rem .8rem;display:flex;gap:.65rem;align-items:center;background:#fafbfd}
 .avatar{width:34px;height:34px;border-radius:50%;background:var(--sr-primary-soft);color:var(--sr-primary);display:grid;place-items:center;font-weight:700;font-size:.8rem;flex:none}
-.main{min-height:100vh}
+.main{
+  min-height:100vh;
+  display: flex;
+  flex-direction: column;
+}
 @media(min-width:992px){.sidebar{position:fixed;inset:0 auto 0 0;z-index:1030}.main{margin-left:248px}}
 .topbar{background:#fff;border-bottom:1px solid var(--sr-line);padding:.7rem 1.5rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:1020}
 .content{padding:1.6rem 1.5rem 3rem;max-width:1280px}
