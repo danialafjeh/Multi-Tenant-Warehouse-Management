@@ -88,8 +88,8 @@
               <div class="cell-title">{{ item.warehouse.name }}</div>
               <div class="cell-sub sku">{{ item.warehouse.code }}</div>
             </td>
-            <td class="num fw-bold">{{ item.quantity }}</td>
-            <td class="num text-muted">{{ item.product.reorder_level }}</td>
+            <td class="fw-bold">{{ item.quantity }}</td>
+            <td class="fw-semibold">{{ item.product.reorder_level }}</td>
             {% if item.stock_status == "in_stock" %}
             <td><span class="badge-soft ok">In stock</span></td>
             {% elif item.stock_status == "low_stock" %}

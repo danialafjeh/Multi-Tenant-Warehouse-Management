@@ -32,8 +32,7 @@
           <tr>
             <th>Warehouse</th>
             <th>Location</th>
-            <th class="num">Products</th>
-            <th class="num">Units</th>
+            <th>Notes</th>
             <th>Status</th>
             <th></th>
           </tr>
@@ -46,8 +45,7 @@
               <div class="cell-sub sku">Code: {{ warehouse.code }}</div>
             </td>
             <td>{{ warehouse.location|default:"Not provided" }}</td>
-            <td>0</td>
-            <td>0</td>
+            <td>{{ warehouse.notes|default:"Not provided" }}</td>
             <td>
               {% if warehouse.status == "active" %}
               <span class="badge-soft ok">Active</span>
@@ -62,7 +60,7 @@
                 data-name="{{ warehouse.name }}" data-code="{{ warehouse.code }}" data-status="{{ warehouse.status }}"
                 data-location="{{ warehouse.location }}" data-notes="{{ warehouse.notes }}"
                 aria-label="Edit {{ warehouse.name }}">
-                <i class="bi bi-pencil"></i>
+                <i class="bi bi-pencil btn btn-sm btn-outline-primary"></i>
               </button>
             </td>
             {% else %}

@@ -12,10 +12,20 @@
     <p class="lead">Stockroom keeps your warehouses, products and stock movements in one place, so your whole team
       works from the same numbers.</p>
     <div class="lp-cta">
+      {% if request.user.is_authenticated %}
+      <a class="btn btn-primary" href="{% url 'dashboard_management_page' %}">View your dashboard</a>
+      <form method="POST" action="{% url 'logout_system' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">
+          Log out
+          </button>
+      </form>
+      {% else %}
       <a class="btn btn-primary" href="{% url 'signup_system' %}">Create account</a>
       <a class="btn btn-primary" href="{% url 'login_system' %}">Log in</a>
+      {% endif %}
     </div>
-    <p class="lp-note">Free to set up. Invite your team after you sign up.</p>
+    <p class="lp-note">Free to set up. Add your team members after you sign up.</p>
     <div class="card lp-preview" aria-hidden="true">
       <div class="bar"><i></i><i></i><i></i></div>
       <div class="p-3 p-md-4">
@@ -129,7 +139,7 @@
         <div class="card lp-feature"><span class="stat-icon" style="background:#e8eefc;color:#2457d6"><i
               class="bi bi-people"></i></span>
           <h3>Your team, your rules</h3>
-          <p>A manager invites members and decides who can record stock and who can only view.</p>
+          <p>A manager adds members and decides who can record stock as staff and who can only be a viewer.</p>
         </div>
       </div>
     </div>
@@ -168,7 +178,11 @@
     <div class="box">
       <h2>Ready to get your stock under control?</h2>
       <p>Create your organization in a minute and add your first warehouse.</p>
-      <a class="btn btn-light" href="register.html">Start Now</a>
+      {% if request.user.is_authenticated %}
+      <a class="btn btn-light" href="{% url 'dashboard_management_page' %}">Start Now</a>
+      {% else %}
+      <a class="btn btn-light" href="{% url 'signup_system' %}">Start Now</a>
+      {% endif %}
     </div>
   </section>
 </main>

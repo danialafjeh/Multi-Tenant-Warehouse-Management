@@ -109,11 +109,11 @@
             </td>
             {% endif %}
             {% if report.movement_type == 'stock_in' %}
-            <td class="num qty-in">+{{ report.quantity }}</td>
+            <td class="fw-semibold text-success">+{{ report.quantity }}</td>
             {% elif report.movement_type == 'stock_out' %}
-            <td class="num qty-in">-{{ report.quantity }}</td>
+            <td class="fw-semibold text-danger">-{{ report.quantity }}</td>
             {% else %}
-            <td class="num qty-in">{{ report.quantity }}</td>
+            <td class="fw-semibold text-primary">{{ report.quantity }}</td>
             {% endif %}
             <td>{{ report.recorded_by_snapshot }}</td>
           </tr>

@@ -57,7 +57,7 @@
             <th>Category</th>
             <th>Unit of measure</th>
             <th class="num">Reorder level</th>
-            <th class="num">Total on hand</th>
+            <th class="num">Description</th>
           </tr>
         </thead>
         <tbody>
@@ -67,10 +67,10 @@
             <td>
               <div class="cell-title">{{ prod.name }}</div>
             </td>
-            <td><span class="badge-soft neutral">{{ prod.category }}</span></td>
+            <td><span class="badge-soft fw-semibold text-primary">{{ prod.category }}</span></td>
             <td>{{ prod.unit }}</td>
-            <td class="num">{{ prod.reorder_level }}</td>
-            <td class="num fw-bold">0</td>
+            <td class="fw-semibold">{{ prod.reorder_level }}</td>
+            <td>{{ prod.description|default:"Not provided" }}</td>
             <td class="text-end text-nowrap">
               <form action="{% url 'delete_product_system' prod.pk %}" method="POST" class="d-inline">
                 {% csrf_token %}
@@ -78,19 +78,12 @@
                   Delete
                 </button>
               </form>
-              <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="offcanvas"
-                data-bs-target="#productDetail" data-name="{{ prod.name }}" data-sku="{{ prod.sku }}"
-                data-category="{{ prod.category.name|default:'Uncategorized' }}" data-unit="{{ prod.unit.name }}"
-                data-reorder="{{ prod.reorder_level }}"
-                data-description="{{ prod.description|default:'No description provided.' }}">
-                Details
-              </button>
               <button type="button" class="btn btn-outline-secondary btn-icon" data-bs-toggle="modal"
                 data-bs-target="#productModal" data-edit="true" data-id="{{ prod.id }}" data-name="{{ prod.name }}"
                 data-sku="{{ prod.sku }}" data-category="{{ prod.category_id|default:'' }}"
                 data-unit="{{ prod.unit_id }}" data-reorder="{{ prod.reorder_level }}"
                 data-description="{{ prod.description }}" aria-label="Edit {{ prod.name }}">
-                <i class="bi bi-pencil"></i>
+                <i class="bi bi-pencil btn btn-sm btn-outline-primary"></i>
               </button>
             </td>
           </tr>
@@ -233,77 +226,7 @@
       </form>
     </div>
   </div>
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="productDetail" style="width:420px">
-    <div class="offcanvas-header border-bottom">
-      <h2 class="offcanvas-title fs-5" id="detailProductName">
-        Product details
-      </h2>
-      <button class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <dl class="detail-list row">
-        <div class="col-6">
-          <dt>SKU</dt>
-          <dd><span class="sku" id="detailProductSku"></span></dd>
-        </div>
-        <div class="col-6">
-          <dt>Category</dt>
-          <dd id="detailProductCategory"></dd>
-        </div>
-        <div class="col-6">
-          <dt>Unit of measure</dt>
-          <dd id="detailProductUnit"></dd>
-        </div>
-        <div class="col-6">
-          <dt>Reorder level</dt>
-          <dd id="detailProductReorder"></dd>
-        </div>
-        <div class="col-12">
-          <dt>Description</dt>
-          <dd id="detailProductDescription"></dd>
-        </div>
-      </dl>
-      <h3 class="h6 mb-2">Stock by warehouse</h3>
-      <div class="card">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Warehouse</th>
-              <th class="num">On hand</th>
-            </tr>
-          </thead>
-          <tbody>
-            {# Warehouse inventory will be implemented later. #}
-            <tr>
-              <td colspan="2" class="text-center text-muted py-3">
-                Inventory details will be available soon.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
 </main>
-
-<script>
-  const productDetail = document.getElementById("productDetail");
-  productDetail.addEventListener("show.bs.offcanvas", function (event) {
-    const button = event.relatedTarget;
-    document.getElementById("detailProductName").textContent =
-      button.dataset.name;
-    document.getElementById("detailProductSku").textContent =
-      button.dataset.sku;
-    document.getElementById("detailProductCategory").textContent =
-      button.dataset.category;
-    document.getElementById("detailProductUnit").textContent =
-      button.dataset.unit;
-    document.getElementById("detailProductReorder").textContent =
-      button.dataset.reorder;
-    document.getElementById("detailProductDescription").textContent =
-      button.dataset.description;
-  });
-</script>
 <script>
   const productModal = document.getElementById("productModal");
   const productForm = document.getElementById("productForm");
