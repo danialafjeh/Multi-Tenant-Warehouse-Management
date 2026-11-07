@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.db import transaction
 from .models import Membership
+from api.models import APIKey
 from django.contrib import messages
 from django.db import IntegrityError
-from .forms import AddMemberForm
+from .forms import AddMemberForm, CreateAPIKeyForm
 from .services import create_member, remove_member, delete_organization
+from api.services import generate_api_key
 
 # Create your views here.
 
@@ -188,4 +190,133 @@ def delete_organization_system(request):
     else:
         messages.error(request, "Invalid request method.")
         return redirect("members_management_page")
+
+
+
+def api_management_page(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+        
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
     
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
+
+    
+    if membership.role != "manager":
+        messages.error(request,"You do not have permission to access API keys",)
+        return redirect("dashboard_management_page")
+
+    api_keys = APIKey.objects.filter(organization=membership.organization)
+
+    form = CreateAPIKeyForm()
+
+    context = {
+        'form':form,
+        'api_keys':api_keys
+    }
+
+    return render(request, 'api_management_page.html', context)
+
+    
+
+def create_api_key(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+
+    if request.method != "POST":
+        messages.error(request,"Invalid request method.")
+        return redirect("home_page")
+
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
+
+    if membership.role != "manager":
+        messages.error(request, "You do not have permission to create API keys.")
+        return redirect("dashboard_management_page")
+
+    api_keys = APIKey.objects.filter(organization=membership.organization)
+
+    form = CreateAPIKeyForm(request.POST)
+
+    if form.is_valid():
+        api_key, raw_key = generate_api_key(
+        organization=membership.organization,
+        name=form.cleaned_data["name"],
+        )
+
+        context = {
+            "form": CreateAPIKeyForm(),
+            "api_key": api_key,
+            "raw_key": raw_key,
+            "api_keys":api_keys
+        }
+
+        messages.success(request, "API Key created successfully.")
+        return render(request, "api_management_page.html", context)
+
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(request, error)
+        
+        return redirect("api_management_page")
+
+
+
+def deactivate_api_key(request, api_key_id):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Please log in to access the dashboard.')
+        return redirect('home_page')
+
+    if request.method != "POST":
+        messages.error(request,"Invalid request method.")
+        return redirect("api_management_page")
+
+    membership = (
+        Membership.objects
+        .select_related("organization")
+        .filter(user=request.user)
+        .first()
+    )
+
+    if membership is None:
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home_page")
+
+    if membership.role != "manager":
+        messages.error(request, "You do not have permission to deactivate API keys.")
+        return redirect("dashboard_management_page")
+
+    api_key = APIKey.objects.filter(
+        pk=api_key_id,
+        organization=membership.organization,
+        is_active=True
+    ).first()
+
+    if api_key:
+        api_key.is_active = False
+        api_key.save(update_fields=["is_active"])
+
+        messages.success(request, "API Key deactivated successfully.")
+
+    else:
+        messages.error(request, "API Key not found or already deactivated.")
+
+    return redirect("api_management_page")

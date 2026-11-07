@@ -7,6 +7,7 @@ urlpatterns = [
     path('members/remove/<int:user_id>/', views.remove_member_system, name='remove_member_system'),
     path('settings/', views.delete_organization_page, name='delete_organization_page'),
     path('settings/delete', views.delete_organization_system, name='delete_organization_system'),
-
-
+    path('api/', views.api_management_page, name='api_management_page'),
+    path('api/create/', views.create_api_key, name='create_api_key_system'),
+    path('api/<int:api_key_id>/deactivate/', views.deactivate_api_key, name='deactivate_api_key_system')
 ]

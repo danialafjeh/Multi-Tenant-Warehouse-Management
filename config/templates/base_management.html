@@ -42,13 +42,19 @@
                 </a>
                 <a class="side-link {% if request.resolver_match.url_name == 'stock_movements_management_page' %}active{% endif %}"
                     href="{% url 'stock_movements_management_page' %}">
-                    <i class="bi bi-arrow-left-right"></i>Stock movements
+                    <i class="bi bi-arrow-left-right"></i>Stock Movements
                 </a>
                 <div class="side-group">Organization</div>
                 <a class="side-link {% if request.resolver_match.url_name == 'members_management_page' %}active{% endif %}"
                     href="{% url 'members_management_page' %}">
                     <i class="bi bi-people"></i>Members
                 </a>
+                {% if current_membership.role == "manager" %}
+                <a class="side-link {% if request.resolver_match.url_name == 'api_management_page' %}active{% endif %}"
+                    href="{% url 'api_management_page' %}">
+                    <i class="bi bi-people"></i>API Keys
+                </a>
+                {% endif %}
             </nav>
             <div class="org-box">
                 <span class="avatar">

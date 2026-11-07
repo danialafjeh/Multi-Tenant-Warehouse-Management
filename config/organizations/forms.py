@@ -103,3 +103,17 @@ class AddMemberForm(UserCreationForm):
             "username",
             "email",
         )
+
+
+
+class CreateAPIKeyForm(forms.Form):
+    name = forms.CharField(
+        max_length=100,
+        label="Name",
+        widget=forms.TextInput(attrs={
+            "id": "api-key-name",
+            "class": "form-control",
+            "placeholder": "Enter a name for your API key",
+            "autocomplete": "off",
+        })
+    )
