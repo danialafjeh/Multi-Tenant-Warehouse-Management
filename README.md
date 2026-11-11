@@ -16,7 +16,7 @@ The project is built with Django and PostgreSQL, follows a modular application s
 
 ---
 
-## 🚀 Overview
+## Overview
 
 Stockroom is a multi-tenant warehouse management web application with complete frontend and backend built to provide a structured and secure environment for businesses that need to manage inventory across multiple warehouses.
 
@@ -50,7 +50,7 @@ The main objectives behind Stockroom are:
 
 ---
 
-## ✨ Key Features
+## Key Features
 
 ### Multi-Tenant Architecture
 - Multiple independent organizations within one application.
@@ -113,7 +113,7 @@ The main objectives behind Stockroom are:
 
 ---
 
-## 🛠 Technology Stack
+## Technology Stack
 
 The project uses the following technologies and libraries:
 
@@ -134,11 +134,11 @@ The project uses the following technologies and libraries:
 | Git | Version control |
 | GitHub | Source code hosting |
 | GitHub Actions | Continuous Integration |
-| Insomnia | API development and manual testing |
+| Postman & Insomnia | API development and manual testing |
 
 ---
 
-## 🏗 System Architecture
+## System Architecture
 
 Stockroom follows a modular Django architecture in which each application is responsible for a specific business domain.
 
@@ -185,7 +185,7 @@ Access control is enforced through authentication, membership validation, and ro
 
 ---
 
-## 🏢 Multi-Tenancy Architecture
+## Multi-Tenancy Architecture
 
 Multi-tenancy is one of the central architectural features of Stockroom.
 
@@ -230,7 +230,7 @@ This approach provides a practical multi-tenant architecture without requiring a
 
 ---
 
-## 👥 Organization & Membership Management
+## Organization & Membership Management
 
 Organizations are the primary ownership boundary in Stockroom.
 
@@ -254,7 +254,7 @@ The authorization model is designed around the relationship between a user, an o
 
 ---
 
-## 🔐 Role-Based Access Control
+## Role-Based Access Control
 
 Stockroom implements a three-level role-based access control system.
 
@@ -292,7 +292,7 @@ This prevents unauthorized users from accessing management functionality simply 
 
 ---
 
-## 🏬 Warehouse Management
+## Warehouse Management
 
 Warehouse management allows each organization to maintain multiple warehouses within its own environment.
 
@@ -321,7 +321,7 @@ Warehouse status is managed independently from the organization and its other wa
 
 ---
 
-## 📦 Product Management
+## Product Management
 
 The product management module provides organization-specific product catalog functionality.
 
@@ -354,7 +354,7 @@ A user cannot access or manage products belonging to another organization throug
 
 ---
 
-## 📊 Inventory Management
+## Inventory Management
 
 Inventory management is a core part of Stockroom.
 
@@ -388,7 +388,7 @@ Only active warehouses contribute to the API's returned total inventory quantity
 
 ---
 
-## 🔄 Stock Operations
+## Stock Operations
 
 Stockroom supports operational inventory changes through stock-in and stock-out functionality.
 
@@ -423,7 +423,7 @@ These records provide a structured way to track changes in warehouse inventory r
 
 ---
 
-## 🚚 Warehouse Transfers
+## Warehouse Transfers
 
 Stockroom supports transferring products between warehouses belonging to the same organization.
 
@@ -445,7 +445,7 @@ Transfers are organization-scoped operations and must respect the organization's
 
 ---
 
-## 📈 Dashboard
+## Dashboard
 
 Stockroom provides a centralized dashboard for organization-level visibility.
 
@@ -463,7 +463,7 @@ The dashboard provides a starting point for navigating the application's main ma
 
 ---
 
-## 🔌 REST API
+## REST API
 
 Stockroom includes a versioned REST API built with Django REST Framework.
 
@@ -519,7 +519,7 @@ This provides a structured foundation for introducing additional endpoints and f
 
 ---
 
-## 🔑 API Key Management
+## API Key Management
 
 Stockroom implements an organization-oriented API key management system.
 
@@ -567,7 +567,7 @@ This ensures that external integrations cannot use an API key belonging to one o
 
 ---
 
-## 🛡 Security & Data Isolation
+## Security & Data Isolation
 
 Security is an important part of Stockroom's architecture.
 
@@ -603,7 +603,7 @@ This is particularly important in a multi-tenant system where unauthorized cross
 
 ---
 
-## 🗄 Database & Data Integrity
+## Database & Data Integrity
 
 Stockroom uses PostgreSQL as its relational database.
 
@@ -638,7 +638,7 @@ The CI workflow also checks for missing migrations before running the automated 
 
 ---
 
-## 🧪 Automated Testing
+## Automated Testing
 
 Stockroom includes an automated Django testing suite.
 
@@ -678,7 +678,7 @@ Not every application and business workflow currently has dedicated automated te
 
 ---
 
-## ⚙️ Continuous Integration
+## Continuous Integration
 
 Stockroom uses GitHub Actions to automate important development checks.
 
@@ -765,7 +765,7 @@ This provides an automated verification step whenever changes are pushed to the 
 
 ---
 
-## 🐳 Dockerization
+## Dockerization
 
 Stockroom is Dockerized and designed to run in a containerized environment.
 
@@ -781,7 +781,7 @@ For complete Docker installation and execution instructions, refer to the [Docke
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 The repository is organized into the following main components:
 
@@ -901,21 +901,6 @@ Sensitive values such as the Django secret key and database credentials should n
 The CI workflow provides its own test-specific environment variables.
 
 ---
-
-## 🌐 Application Routes
-
-The main application sections are organized under the following URL prefixes:
-
-| Route | Description |
-|---|---|
-| `/` | Main application entry point |
-| `/admin/` | Django administration |
-| `/dashboard/` | Main dashboard |
-| `/organization/` | Organization management |
-| `/products/` | Product management |
-| `/stock/` | Inventory operations |
-| `/warehouses/` | Warehouse management |
-| `/api/v1/` | Versioned REST API |
 
 ### API Documentation Routes
 
