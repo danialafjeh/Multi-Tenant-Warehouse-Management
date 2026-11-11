@@ -38,11 +38,11 @@ jobs:
 
     env:
       SECRET_KEY: 'ci-test-secret-key-not-for-production'
-      DB_NAME: stockroom_test
-      DB_USER: postgres
-      DB_PASSWORD: demopass
-      DB_HOST: localhost
-      DB_PORT: 5432
+      POSTGRES_DB: stockroom_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: demopass
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
 
     steps:
       - name: Checkout repository
