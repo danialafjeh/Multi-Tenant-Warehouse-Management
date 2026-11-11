@@ -30,6 +30,14 @@ The system follows a modular Django architecture, separating business responsibi
 
 Stockroom is primarily a server-rendered Django application, using Django Templates and Bootstrap for its web interface. A REST API is also provided for external integrations and programmatic inventory access.
 
+### Optimized Database Queries
+
+All database interactions are implemented using Django ORM, with a strong focus on query efficiency, performance, and maintainability.
+
+The project uses Django ORM optimization techniques such as `select_related()` to retrieve related objects efficiently and reduce unnecessary database queries. Queries are carefully structured to avoid redundant database access, minimize unnecessary data retrieval, and improve performance across different application modules.
+
+Database operations are designed to maintain readable, maintainable, and efficient code while taking advantage of Django ORM capabilities. These optimizations help reduce query overhead, particularly when working with related models and organization-scoped data in the multi-tenant architecture.
+
 ### Project Goals
 
 The main objectives behind Stockroom are:
