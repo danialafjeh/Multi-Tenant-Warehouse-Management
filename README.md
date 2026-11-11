@@ -12,7 +12,7 @@ The frontend template is based on a full modern design by Claude AI, which has b
 
 Stockroom provides an organization-oriented architecture with strict tenant isolation, role-based access control, warehouse and product management, inventory tracking, stock operations, warehouse transfers, and a versioned REST API secured with organization-managed API keys.
 
-The project is built with Django and PostgreSQL, follows a modular application structure, and is also Dockerized. It also includes automated tests and a GitHub Actions CI workflow.
+The project is built with Django and PostgreSQL, follows a modular application structure, Dockerized and also includes automated tests and a GitHub Actions CI workflow.
 
 ---
 
