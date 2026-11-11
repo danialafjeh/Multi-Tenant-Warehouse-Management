@@ -114,6 +114,7 @@ The main objectives behind Stockroom are:
 ### Development & Quality
 - Modular Django application architecture.
 - PostgreSQL database integration.
+- Clean and optimized SQL queries
 - Dockerized application environment.
 - Automated Django tests.
 - Git-based development workflow.
