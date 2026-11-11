@@ -37,6 +37,7 @@ jobs:
           --health-retries 5
 
     env:
+      SECRET_KEY: 'ci-test-secret-key-not-for-production'
       DB_NAME: stockroom_test
       DB_USER: postgres
       DB_PASSWORD: demopass
