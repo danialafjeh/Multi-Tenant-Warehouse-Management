@@ -18,7 +18,7 @@ The project is built with Django and PostgreSQL, follows a modular application s
 
 ## 🚀 Overview
 
-Stockroom is a multi-tenant warehouse management application built to provide a structured and secure environment for businesses that need to manage inventory across multiple warehouses.
+Stockroom is a multi-tenant warehouse management web application with complete frontend and backend built to provide a structured and secure environment for businesses that need to manage inventory across multiple warehouses.
 
 Unlike a traditional single-organization warehouse application, Stockroom allows multiple independent organizations to operate within the same application infrastructure.
 
