@@ -1,6 +1,14 @@
-# Stockroom — Multi-Tenant Warehouse Management System
+# 💻 About This Project
 
-A Django-based, multi-tenant warehouse management system designed to help multiple independent organizations manage their warehouses, products, inventory operations, and stock movements through a centralized web application.
+[Complete Guide | Run this project on your computer](https://github.com/danialafjeh/Run-My-Projects-Locally)<br>
+
+# Stockroom — Multi-Tenant Warehouse Management Website
+
+Complexity : Advanced
+
+A full-stack multi-tenant warehouse management web application built using Django MVT architecture and Django REST Framework (DRF), designed to help multiple independent organizations manage their warehouses, products, inventory operations, and stock movements through a centralized web application.
+
+The frontend template is based on a full modern design by Claude AI, which has been extensively customized and extended with additional pages and backend integration.
 
 Stockroom provides an organization-oriented architecture with strict tenant isolation, role-based access control, warehouse and product management, inventory tracking, stock operations, warehouse transfers, and a versioned REST API secured with organization-managed API keys.
 
@@ -25,7 +33,8 @@ Stockroom is primarily a server-rendered Django application, using Django Templa
 ### Project Goals
 
 The main objectives behind Stockroom are:
-
+- Woked with GIT version control from 0 to 100 of development.
+- Has full frontend pages, full backend (MVT) and full API keys section (DRF).
 - Implementing a practical multi-tenant architecture in Django.
 - Enforcing organization-level data isolation.
 - Designing role-based authorization for organization members.
@@ -112,10 +121,10 @@ The project uses the following technologies and libraries:
 |---|---|
 | Python 3.13 | Main programming language |
 | Django 6.1.2 | Backend web framework |
-| Django Templates | Server-side rendering |
 | Django REST Framework | REST API development |
 | drf-spectacular | OpenAPI schema and API documentation |
 | PostgreSQL 18 | Relational database |
+| Django Templates | Frontend pages |
 | HTML5 | Web page structure |
 | CSS3 | Styling |
 | Bootstrap | Responsive user interface |
